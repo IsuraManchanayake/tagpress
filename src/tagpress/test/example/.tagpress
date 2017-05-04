@@ -1,0 +1,32 @@
+{
+ "tagpressfile": [
+  {
+   "name": "1.png",
+   "tags": []
+  },
+  {
+   "name": "2.png",
+   "tags": []
+  },
+  {
+   "name": "3.jpg",
+   "tags": []
+  },
+  {
+   "name": "abc.txt",
+   "tags": []
+  },
+  {
+   "name": "4.png",
+   "tags": [
+    {
+     "name": "pop",
+     "category": {
+      "name": "music",
+      "color": "green"
+     }
+    }
+   ]
+  }
+ ]
+}

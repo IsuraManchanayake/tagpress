@@ -1,28 +1,93 @@
 <!doctype html>
 <html>
+
 <head>
-  <meta charset="utf-8">
-  <title>Electron Boilerplate</title>
-  <link href="stylesheets/main.css" rel="stylesheet" type="text/css">
+    <meta charset="utf-8">
+    <title>TagPress</title>
+    <script>
+        if (typeof module === 'object') {
+            window.module = module;
+            module = undefined;
+        }
+        window.jQuery = require('./jquery-3.2.0.min.js')
+        window.$ = require('./jquery-3.2.0.min.js')
+    </script>
+    <script src="jquery-ui.js"></script>
+    <link href="stylesheets/main.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="mdl/material.min.css">
+    <script src="mdl/material.min.js"></script>
+    <link rel="stylesheet" href="mdl/fonts.css">
+    <!--<script src="jquery-3.2.0.min.js"></script>-->
+    <style>
+        body {
+            zoom: 100%;
+        }
+        
+        .glyphicon {
+            font-size: 30px;
+            vertical-align: middle;
+        }
+    </style>
 </head>
+
 <body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <!--<a class="navbar-brand" href="#">-->
+                <!--<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>-->
+                <!--<button type="submit" class="btn btn-default">Submit</button>-->
+                <form class="navbar-form navbar-left" role="search">
+                    <!--<div class="form-group">-->
+                    <span class="glyphicon glyphicon-tags fa-lg" aria-hidden="true">&nbsp</span>
+                    <!--<input type="text" class="form-control" placeholder="Search">-->
+                    <!--</div>-->
+                    <button type="button" id="import-btn" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                            import
+                        </button>
+                </form>
+                <!--<span>
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                            Button
+                        </button>
+                    </span>-->
+                <!--<img alt="Brand" src="../src/tagpress/view/img/logo-small.png" width="20px">-->
+            </div>
+        </div>
+    </nav>
+    <!--<span class="glyphicon glyphicon-tags fa-5x" aria-hidden="true"></span>-->
+    <!--<ul id="top-bar">
+        <li id="logo-main"><img class="logo-small" src="../src/tagpress/view/img/logo-small.png" />TagPress</li>
+        <li><a id="import" class="active">Import</a></li>-->
+    <!--<li><a href="#news">News</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#about">About</a></li>-->
+    <!--</ul>-->
+    <!--<div id="under">
+        <div id="file-nav" class="resizable ui-widget-content">
 
-  <div class="container">
-    <h1 id="greet"></h1>
-    <p>
-      Welcome to <a href="http://electron.atom.io" class="js-external-link">Electron</a> app running on this magnificent <strong id="os"></strong> machine.
-    </p>
-    <p>
-      App author: <strong id="author"></strong>
-    </p>
-    <p>
-      Environment: <strong id="env"></strong>
-    </p>
-    <p>
-      Electron version: <strong id="electron-version"></strong>
-    </p>
-  </div>
+        </div>
+        <div id="file-preview" class="resizable ui-widget-content">
+            sdfsd
+        </div>
+    </div>-->
+    <div class="row">
+        <div class="col-xs-3" id="file-nav">
 
-  <script src="app.js"></script>
+        </div>
+        <div class="col-xs-9" id="file-preview">
+
+        </div>
+    </div>
+    <script src="app.js"></script>
+    <script>
+        $(document).ready(function() {
+            console.log('dsdd');
+            console.log($('.resizable'));
+            $(".resizable").resizable();
+        });
+    </script>
 </body>
+
 </html>
