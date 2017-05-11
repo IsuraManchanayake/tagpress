@@ -6,7 +6,7 @@ USE TAGPRESS;
 CREATE TABLE category (
     cid INT,
     cname VARCHAR(20) NOT NULL,
-    color VARCHAR(10),
+    color VARCHAR(20),
     PRIMARY KEY(cid)
 );
 
@@ -251,7 +251,8 @@ INSERT INTO `filetag` (`filid`, `tid`) VALUES
 (4007, 2023),
 (4008, 2024),
 (4009, 2024),
-(4010, 2025)
+(4010, 2025),
+(4011, 2014)
 ;
 
 INSERT INTO `tag` (`tid`, `cid`, `tname`) VALUES

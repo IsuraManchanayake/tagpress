@@ -1,9 +1,12 @@
 import { global } from '../global/global'
 import mysql from 'mysql'
 
+// let _instance = null;
+
 export class DBConnect {
 
     constructor() {
+        // if (!_instance) {
         this.con = mysql.createConnection({
             host: global.dbhost,
             user: global.dbuser,
@@ -18,6 +21,16 @@ export class DBConnect {
             }
             console.log('Connection Established');
         });
+
+        this.pool = mysql.createPool({
+            host: global.dbhost,
+            user: global.dbuser,
+            passord: global.dbpassword,
+            database: global.dbname
+        });
+        // _instance = this;
+        // }
+        // return _instance;
     }
 
 }

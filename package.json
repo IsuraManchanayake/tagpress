@@ -35,7 +35,9 @@
     "jquery": "^3.2.1",
     "jquery-ui": "^1.12.1",
     "jquery-ui-dist": "^1.12.1",
-    "jsonfile": "^2.4.0"
+    "jsonfile": "^2.4.0",
+    "multimap": "^1.0.2",
+    "node-async-loop": "^1.2.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
