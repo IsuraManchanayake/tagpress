@@ -35,49 +35,110 @@
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
-                <!--<a class="navbar-brand" href="#">-->
-                <!--<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>-->
-                <!--<button type="submit" class="btn btn-default">Submit</button>-->
                 <form class="navbar-form navbar-left" role="search">
-                    <!--<div class="form-group">-->
                     <span class="glyphicon glyphicon-tags fa-lg" aria-hidden="true">&nbsp</span>
-                    <!--<input type="text" class="form-control" placeholder="Search">-->
-                    <!--</div>-->
-                    <button type="button" id="import-btn" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                            import
-                        </button>
+                    <button type="button" id="import-btn" class="btn btn-success">Import</button>
                 </form>
-                <!--<span>
-                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                            Button
-                        </button>
-                    </span>-->
-                <!--<img alt="Brand" src="../src/tagpress/view/img/logo-small.png" width="20px">-->
             </div>
         </div>
     </nav>
-    <!--<span class="glyphicon glyphicon-tags fa-5x" aria-hidden="true"></span>-->
-    <!--<ul id="top-bar">
-        <li id="logo-main"><img class="logo-small" src="../src/tagpress/view/img/logo-small.png" />TagPress</li>
-        <li><a id="import" class="active">Import</a></li>-->
-    <!--<li><a href="#news">News</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a href="#about">About</a></li>-->
-    <!--</ul>-->
-    <!--<div id="under">
-        <div id="file-nav" class="resizable ui-widget-content">
-
-        </div>
-        <div id="file-preview" class="resizable ui-widget-content">
-            sdfsd
-        </div>
-    </div>-->
     <div class="row">
         <div class="col-xs-2" id="file-nav">
 
         </div>
-        <div class="col-xs-7" id="file-preview">
+        <div class="col-xs-7" id="mid-section">
+            <div class="row" id="do-bar">
+                <form class="form-inline" style="float: left">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="glyphicon glyphicon-search"></i></div>
+                            <input type="text" class="form-control" id="search-input" placeholder="Search by tags..">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-default">Search</button>
+                </form>
+                <button type="button" class="btn btn-default" style="float: right" data-toggle="modal" data-target="#myModal">Group files</button>
+            </div>
+            <div class="row" id="file-preview">
 
+                <!-- group files start -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">Group files</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="btn-group input-group form-group" data-toggle="buttons">
+                                    <label class="btn btn-default active">
+                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Copy
+                                    </label>
+                                    <label class="btn btn-default">
+                                        <input type="radio" name="options" id="option2" autocomplete="off"> Move
+                                    </label>
+                                </div>
+                                <div class="form-inline form-group">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" width="" id="file-group-folder-path" placeholder="Browse">
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-default">Browse</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select category<span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#" class="dropdown-links" style="background-color: darkcyan">music</a></li>
+                                            <li><a href="#" class="dropdown-links" style="background-color: darkmagenta">font</a></li>
+                                            <li><a href="#" class="dropdown-links" style="background-color: gold">rating</a></li>
+                                            <li><a href="#" class="dropdown-links" style="background-color: indianred">date</a></li>
+                                            <li><a href="#" class="dropdown-links" style="background-color: orangered">current-state</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select tag<span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#" class="dropdown-links" style="background-color: gold">5-Stars</a></li>
+                                            <li><a href="#" class="dropdown-links" style="background-color: gold">4-Stars</a></li>
+                                            <li><a href="#" class="dropdown-links" style="background-color: gold">3-Stars</a></li>
+                                            <li><a href="#" class="dropdown-links" style="background-color: gold">2-Stars</a></li>
+                                            <li><a href="#" class="dropdown-links" style="background-color: gold">1-Star</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="btn-group">
+                                        <button type="button" id="addnew-tag-group" class="btn btn-default"><i id="addnew-tag-icon" class="glyphicon glyphicon-plus"></i></button>
+                                    </div>
+                                </div>
+                                <ul class="nav nav-tabs">
+                                    <li role="presentation" class="active"><a href="#menu1">Home</a></li>
+                                    <li role="presentation"><a href="#menu2">Profile</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="menu1" class="tab-pane fade">
+                                        <h3>Menu 1</h3>
+                                        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                    </div>
+                                    <div id="menu2" class="tab-pane fade">
+                                        <h3>Menu 2</h3>
+                                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Group</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- group files end -->
+
+            </div>
         </div>
         <div class="col-xs-3" id="tag-inventory">
 
@@ -91,6 +152,7 @@
             $(".resizable").resizable();
         });
     </script>
+    <script src="js/bootstrap.min.js"></script>
 </body>
 
 </html>

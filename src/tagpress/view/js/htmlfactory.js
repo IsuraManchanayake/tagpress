@@ -78,6 +78,7 @@ export const showTagInventory = (tags) => {
                 var categoryH = document.createElement('h3');
                 categoryH.innerHTML = category;
                 categoryDiv.className = "tag-inventory-category";
+                categoryDiv.id = "category-div-" + category;
                 categoryDiv.appendChild(categoryH);
                 tags[category].tags.forEach(function(tag) {
                     var tagkbd = document.createElement('kbd');
@@ -89,14 +90,29 @@ export const showTagInventory = (tags) => {
                 var addnewTag = document.createElement('kbd');
                 addnewTag.style.cssFloat = "left";
                 addnewTag.className = "add-newtag-kbd";
+                addnewTag.title = "add new tag to " + category;
                 addnewTag.style.backgroundColor = tags[category].tags[0].category.color;
-                addnewTag.innerHTML = '<i class="glyphicon glyphicon-plus add-newtag"></i>';
+                addnewTag.id = 'add-newtag-kbd-' + category
+                addnewTag.innerHTML = '<i id="add-newtag-icon-' + tags[category].tags[0].category.name +
+                    '" class="glyphicon glyphicon-plus add-newtag"></i>';
                 categoryDiv.appendChild(addnewTag);
                 var clearFix = document.createElement('div');
                 clearFix.style.clear = "both";
                 categoryDiv.appendChild(clearFix);
                 document.querySelector('#tag-inventory').appendChild(categoryDiv);
+                var testdiv = document.createElement('div');
             }
         }
     }
+}
+
+export const showCreateNewTag = (category) => {
+    var plusIcon = document.querySelector('#add-newtag-kbd-' + category.name);
+    console.log('#category-name-' + category.name);
+    plusIcon.style.display = 'none';
+    var categoryDiv = document.querySelector('#category-div-' + category.name);
+    var newTag = document.createElement('input');
+    newTag.type = 'text';
+    newTag.className = 'add-newtag-input form-control';
+    categoryDiv.appendChild(newTag);
 }

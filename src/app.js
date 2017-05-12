@@ -97,4 +97,5 @@ filequery.getAllTags(function(tagrows) {
         tags[tagrow.cname].tags.push(tag);
     });
     hf.showTagInventory(tags);
+    hf.showCreateNewTag(new Category('font'));
 });

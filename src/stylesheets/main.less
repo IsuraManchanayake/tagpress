@@ -4,10 +4,52 @@ html, body {
     height: 100%;
     overflow: hidden;
     user-select: none;
+    cursor: default;
+}
+
+#addnew-tag-icon {
+    font-size: 15px !important;
+    vertical-align: baseline !important;
+}
+
+#addnew-tag-group {
+    border: 1px dashed silver;
+}
+
+.dropdown-links {
+    color: white !important; 
+}
+
+.dropdown-links:hover {
+    filter: brightness(120%);
+    transition: filter 0.3s;
+}
+
+#file-group-folder-path {
+    width: 200px !important;
+}
+
+#file-group-folder-path:focus {
+    width: 400px !important;
+    transition: width 0.33s;
+}
+
+.glyphicon-search {
+    font-size: 11px !important;
+    vertical-align: baseline !important;
 }
 
 .tag-inventory-category {
     box-shadow: 0px 5px 0px -4px silver;
+}
+
+.add-newtag-input {
+    margin: 2px !important;
+    font-size: 11px !important;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    width: 80px !important;
+    height: 25px !important;
+    text-align: center;
 }
 
 .add-newtag {
@@ -19,6 +61,7 @@ html, body {
 .add-newtag-kbd:hover {
     filter: brightness(140%);
     box-shadow: none;
+    transition: filter 0.33s;
 }
 
 .tag-remove {
@@ -41,9 +84,12 @@ kbd {
 
 kbd:hover {
     // box-shadow: inset 0px -3px 0px -2px black;
-    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5) !important;
+    // box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5) !important;
     text-shadow: 0px 0px 2px white;
-    transition: box-shadow 0.5s;
+    filter: brightness(110%);
+    // transition: box-shadow 0.5s;
+    transition: text-shadow 0.5s;
+    transition: filter 0.5s;
 }
 
 div.gallery {
@@ -138,6 +184,7 @@ div.desc {
     //  max-width: 40%;
     //  margin-top: -20px;
      padding: 10px;
+     background: white;
     // //  height: calc(~"100vh");
     //  height: calc(~"100vh - 55px");
     //  display: inherit;
@@ -147,10 +194,16 @@ div.desc {
     padding-right: 30px;
 }
 
+#do-bar {
+    border-left: 1px solid silver;
+    border-bottom: 1px solid silver;
+    padding: 5px;
+}
+
  #file-preview, #tag-inventory {
     //  background: red;
      height: 100vh;
-     background: white;
+    //  background: white;
      padding-top: 15px;
      border-left: 1px solid silver;
      overflow: auto;
