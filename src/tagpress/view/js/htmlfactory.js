@@ -86,6 +86,7 @@ export const showTagInventory = (tags, emptyCategories, onAddNewTag, onRemoveTag
                     tagkbd.style.backgroundColor = tag.category.color;
                     tagkbd.style.cssFloat = "left";
                     tagkbd.id = 'tagkbd-' + category + '-' + tag.name;
+                    tagkbd.className = 'tag-inventory-draggable draggable'
 
                     var eicon = document.createElement('i');
                     eicon.className = 'glyphicon glyphicon-pencil tag-edit';

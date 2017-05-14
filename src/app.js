@@ -5,6 +5,8 @@ import { remote } from 'electron';
 import path from 'path'
 import jetpack from 'fs-jetpack';
 import env from './env';
+import interact from 'interact.js'
+
 import { listAllFiles } from './tagpress/model/tagpressfilehandler/validator'
 import { Folder } from './tagpress/model/fileinformation/folder'
 import { File } from './tagpress/model/fileinformation/file'
@@ -187,3 +189,61 @@ filequery.getAllTags(function(tagrows) {
         hf.showTagInventory(tags, emptyCategories, onAddNewTag, onRemoveTag, onEditTag, onAddNewCategoryBtnClicked);
     });
 });
+
+interact('.gallery').draggable({
+    intertia: true,
+    restrict: {
+        restriction: "parent",
+        endOnly: true,
+        elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+    },
+    autoScroll: true,
+    onstart: function(e) {
+        console.log('shsdfit');
+    }
+});
+
+// target elements with the "draggable" class
+interact('.draggable')
+    .draggable({
+        // enable inertial throwing
+        inertia: true,
+        // keep the element within the area of it's parent
+        restrict: {
+            restriction: "#file-nav",
+            endOnly: true,
+            elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+        },
+        // enable autoScroll
+        // autoScroll: true,
+
+        // call this function on every dragmove event
+        onmove: global.dragMoveListener
+            // call this function on every dragend event
+            // onend: function(event) {
+            //     var textEl = event.target.querySelector('p');
+
+        //     textEl && (textEl.textContent =
+        //         'moved a distance of ' +
+        //         (Math.sqrt(event.dx * event.dx +
+        //             event.dy * event.dy) | 0) + 'px');
+        // }
+    }).on('move', function(event) {
+        var interaction = event.interaction;
+        if (interaction.pointerIsDown && !interaction.interacting() && event.currentTarget.getAttribute('clonable') != 'false') {
+            var original = event.currentTarget;
+            var clone = event.currentTarget.cloneNode(true);
+            var x = clone.offsetLeft;
+            var y = clone.offsetTop;
+            clone.setAttribute('clonable', 'false');
+            clone.style.position = "absolute";
+            clone.style.left = original.offsetLeft + "px";
+            clone.style.top = original.offsetTop + "px";
+            original.parentElement.appendChild(clone);
+            interaction.start({ name: 'drag' }, event.interactable, clone);
+        }
+    });;
+
+
+// this is used later in the resizing and gesture demos
+window.dragMoveListener = global.dragMoveListener;
