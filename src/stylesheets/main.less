@@ -7,6 +7,38 @@ html, body {
     cursor: default;
 }
 
+.category-color-option {
+    height: 20px !important;
+}
+
+.newcategory-div {
+    margin: 10px !important;
+    margin-bottom: 0px !important;
+    border: 1px solid lightgrey;
+    border-radius: 3px;
+    padding: 10px;
+    // margin-top: 10px !important;
+}
+
+.last-line {
+    padding-left: -10px !important;
+    padding-right: -10px !important;
+}
+
+#btn-addnew-category {
+    margin-top: 20px;
+    vertical-align: baseline !important;
+    border: 0.5px solid lightgrey;
+    // border: none;
+    // color: silver;
+}
+
+#btn-addnew-category:hover {
+    text-shadow: 0 0 3px silver;
+    transition: text-shadow 0.4s;
+    box-shadow: 0 0 3px 0 deepskyblue;
+}
+
 #addnew-tag-icon {
     font-size: 15px !important;
     vertical-align: baseline !important;
@@ -47,9 +79,11 @@ html, body {
     margin: 2px !important;
     font-size: 11px !important;
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-    width: 80px !important;
+    width: 145px !important;
     height: 25px !important;
-    text-align: center;
+    padding: 4px !important;
+    // text-align: center;
+    float: left;
 }
 
 .add-newtag {
@@ -64,16 +98,29 @@ html, body {
     transition: filter 0.33s;
 }
 
-.tag-remove {
+.tag-remove, .tag-edit {
     font-size: 11px !important;
     vertical-align: baseline !important;
     display: none;
     margin-left: 5px;
+    opacity: 1;
+    -webkit-transition: opacity 1s;
+    border: 1px solid rgba(255, 255, 255, 0);
+    padding: 2px;
+    border-radius: 5px;
+    // text-shadow:0px 0px 10px black;
 }
 
-.tag-remove:hover {
-    text-shadow:0px 0px 3px white;
+.tag-hide {
+    opacity: 0;
+    -webkit-transition: opacity 1s;
+}
+
+.tag-remove:hover, .tag-edit:hover {
+    text-shadow:0px 0px 10px white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
     transition: text-shadow 0.4s;
+    transition: border 0.4s;
 }
 
 kbd {
@@ -83,11 +130,8 @@ kbd {
 }
 
 kbd:hover {
-    // box-shadow: inset 0px -3px 0px -2px black;
-    // box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5) !important;
     text-shadow: 0px 0px 2px white;
     filter: brightness(110%);
-    // transition: box-shadow 0.5s;
     transition: text-shadow 0.5s;
     transition: filter 0.5s;
 }

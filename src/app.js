@@ -15,7 +15,7 @@ import { global } from './tagpress/global/global'
 import * as filequery from './tagpress/data/filequery'
 import * as hf from './tagpress/view/js/htmlfactory'
 
-var lista = listAllFiles(new Folder('src/tagpress/test/example/'))
+// var lista = listAllFiles(new Folder('src/tagpress/test/example/'))
 
 const app = remote.app;
 const appDir = jetpack.cwd(app.getAppPath());
@@ -28,16 +28,19 @@ const osMap = {
     linux: 'Linux',
 };
 
+var currentFolder;
+
 filequery.listAllIndexedFolders(function(err, rows) {
     if (err) {
         console.error(err);
     } else {
         rows.forEach(function(row) {
             var folder = new Folder(row.fpath);
-            folder.fid = row.fid;
+            folder.fid = row.folid;
             var div = document.createElement('div');
             div.innerHTML = hf.getFileNavigationFolderHTML(folder);
             div.addEventListener('click', function() {
+                currentFolder = folder;
                 showFiles(folder);
             });
             document.querySelector("#file-nav").appendChild(div);
@@ -45,8 +48,8 @@ filequery.listAllIndexedFolders(function(err, rows) {
     }
 });
 
-
 var showFiles = function(folder) {
+    // console.log(folder);
     var ul = document.createElement('ul');
     filequery.getAllTagsInTheFolder(folder.fid, function(tagMap) {
         filequery.getIndexedFilesInsideFolder(folder.fid, function(err, rows) {
@@ -68,10 +71,8 @@ var showFiles = function(folder) {
                         div.innerHTML = hf.getImageThumbnailPreview(file);
                     }
                     document.querySelector("#file-preview").appendChild(div);
-                    // document.querySelector("#file-id-" + file.fid).innerHTML = "dsf";
                 });
                 var files = [];
-                // console.log(tagMap);
                 tagMap.forEach(function(tag) {
                     if (tag.filid in files) {} else {
                         files[tag.filid] = {};
@@ -85,6 +86,86 @@ var showFiles = function(folder) {
     });
 }
 
+var onNewTagEnterKey = function(inputText, categoryName, categoryColor) {
+    filequery.insertNewTag(categoryName, inputText, function(err) {
+        if (err && err.message.startsWith('ER_DUP_ENTRY')) {
+            alert('No duplicate tag names');
+        } else {
+            hf.showNewTag(categoryName, inputText, categoryColor, onEditTag, onRemoveTag);
+        }
+    });
+}
+
+var onAddNewTag = function(category) {
+    console.log('sdfsdf');
+    console.log(category);
+    hf.showInputNewTag(category).addEventListener('keydown', function(e) {
+        if (e.keyCode == 13) { // Enter key
+            onNewTagEnterKey(this.value, category.name, category.color);
+            this.remove();
+            hf.showAddNewTagIcon(category).addEventListener('click', function() {
+                onAddNewTag(category);
+            });
+        } else if (e.keyCode == 27) { // Escape key
+            this.remove();
+            hf.showAddNewTagIcon(category).addEventListener('click', function() {
+                onAddNewTag(category);
+            });
+        } else if (e.keyCode == 32) { // Space key
+            e.preventDefault();
+        }
+    });
+}
+
+var onCreateNewCategory = function(categoryName, categoryColor) {
+    // alert(categoryName + ' - ' + categoryColor);
+    filequery.insertCategory(categoryName, categoryColor, function(err) {
+        if (err && err.message.startsWith('ER_DUP_ENTRY')) {
+            alert('no duplicate categories');
+        } else {
+            hf.showNewCategory(categoryName, categoryColor, onAddNewTag);
+        }
+    });
+}
+
+var onAddNewCategoryBtnClicked = function() {
+    hf.showInputNewCategory(onCreateNewCategory);
+}
+
+var onRemoveTag = function(category, tag) {
+        filequery.checkTagAvailabilityBeforeRemoveTag(category, tag, function(err, avail) {
+            if (!err) {
+                if (avail) {
+                    var ans = confirm('The tag: ' + tag + '(' + category + ') has been tagged by some of ' +
+                        'files. Do you want to remove the tag? (The tag of those files will be automatically removed)');
+                    if (ans) {
+                        filequery.removeTag(category, tag, function(err) {
+                            document.querySelector('#tagkbd-' + category + '-' + tag).remove();
+                            showFiles(currentFolder);
+                        });
+                    }
+                } else {
+                    var ans = confirm('The tag: ' + tag + '(' + category + ') is not tagged by any of ' +
+                        'files. Do you want to remove the tag?');
+                    if (ans) {
+                        filequery.removeTag(category, tag, function(err) {
+                            document.querySelector('#tagkbd-' + category + '-' + tag).remove();
+                        });
+                    }
+                }
+            }
+        });
+    }
+    // filequery.removeTag(category, tag, function(err) {
+    //     if (!err) {
+    //         document.querySelector('#tagkbd-' + category + '-' + tag).remove();
+    //     };
+    // });
+
+var onEditTag = function(category, tag) {
+    alert('edit ' + category + ' - ' + tag);
+}
+
 filequery.getAllTags(function(tagrows) {
     var tags = [];
     tagrows.forEach(function(tagrow) {
@@ -96,6 +177,13 @@ filequery.getAllTags(function(tagrows) {
         tag.tid = tagrow.tid;
         tags[tagrow.cname].tags.push(tag);
     });
-    hf.showTagInventory(tags);
-    hf.showCreateNewTag(new Category('font'));
+    var emptyCategories = [];
+    filequery.getEmptyCategories(function(emptyCategoryRows) {
+        if (emptyCategoryRows) {
+            emptyCategoryRows.forEach(function(categoryrow) {
+                emptyCategories.push(new Category(categoryrow.cname, categoryrow.color));
+            });
+        }
+        hf.showTagInventory(tags, emptyCategories, onAddNewTag, onRemoveTag, onEditTag, onAddNewCategoryBtnClicked);
+    });
 });

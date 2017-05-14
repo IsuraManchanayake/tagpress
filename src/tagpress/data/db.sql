@@ -1,53 +1,47 @@
 DROP DATABASE TAGPRESS;
 CREATE DATABASE TAGPRESS;
-
 USE TAGPRESS;
 
-CREATE TABLE category (
-    cid INT,
-    cname VARCHAR(20) NOT NULL,
+CREATE TABLE `category` (
+    cid INT NOT NULL AUTO_INCREMENT,
+    cname VARCHAR(20) NOT NULL UNIQUE,
     color VARCHAR(20),
     PRIMARY KEY(cid)
 );
 
-CREATE TABLE tag (
-    tid INT,
+CREATE TABLE `tag` (
+    tid INT NOT NULL AUTO_INCREMENT,
     cid INT,
     tname VARCHAR(20) NOT NULL,
     PRIMARY KEY(tid),
-    FOREIGN KEY(cid) REFERENCES category(cid)
-    ON DELETE CASCADE
+    FOREIGN KEY(cid) REFERENCES category(cid) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE indexedfolders (
-    fid INT,
+ALTER TABLE `tag` ADD UNIQUE (cid, tname);
+
+CREATE TABLE `indexedfolders` (
+    folid INT NOT NULL AUTO_INCREMENT,
     fpath VARCHAR(200) NOT NULL,
-    PRIMARY KEY(fid)
+    PRIMARY KEY(folid)
 );
-
-CREATE TABLE `filetag` (
-  `filid` int(11) NOT NULL,
-  `tid` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `indexedfiles` (
-  `folid` int(11) NOT NULL,
+  `folid` INT(11) NOT NULL,
   `filename` varchar(50) NOT NULL,
-  `filid` int(11) NOT NULL
+  `filid` INT(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY(filid),
+  FOREIGN KEY(folid) REFERENCES indexedfolders(folid) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `filetag` (
+  `filid` INT(11) NOT NULL,
+  `tid` INT(11) NOT NULL,
+  FOREIGN KEY(filid) REFERENCES indexedfiles(filid) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY(tid) REFERENCES tag(tid) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
-INSERT INTO `category` (`cid`, `cname`, `color`) VALUES
-    (1001, 'default', 'green'),
-    (1002, 'music', 'darkcyan'),
-    (1003, 'font', 'darkmagenta'),
-    (1004, 'rating', 'gold'),
-    (1005, 'date', 'indianred'),
-    (1006, 'current-state', 'orangered'),
-    (1007, 'priority', 'red')
-;
-
-INSERT INTO `indexedfolders` (`fid`, `fpath`) VALUES
+INSERT INTO `indexedfolders` (`folid`, `fpath`) VALUES
 (3000, '/home/isura/Downloads/'),
 (3001, '/home/isura/Pictures/'),
 (3002, '/home/isura/Music/top-chart/'),
@@ -233,26 +227,14 @@ INSERT INTO `indexedfiles` (`filid`, `filename`, `folid`) VALUES
 (4174, 'Padauk-bookbold.ttf', 3004)
 ;
 
-INSERT INTO `filetag` (`filid`, `tid`) VALUES
-(4000, 2002),
-(4000, 2009),
-(4000, 2019),
-(4001, 2002),
-(4001, 2009),
-(4001, 2019),
-(4002, 2012),
-(4002, 2003),
-(4003, 2002),
-(4003, 2020),
-(4004, 2013),
-(4004, 2021),
-(4005, 2023),
-(4006, 2023),
-(4007, 2023),
-(4008, 2024),
-(4009, 2024),
-(4010, 2025),
-(4011, 2014)
+INSERT INTO `category` (`cid`, `cname`, `color`) VALUES
+    (1001, 'default', 'green'),
+    (1002, 'music', 'darkcyan'),
+    (1003, 'font', 'darkmagenta'),
+    (1004, 'rating', 'gold'),
+    (1005, 'date', 'indianred'),
+    (1006, 'current-state', 'orangered'),
+    (1007, 'priority', 'red')
 ;
 
 INSERT INTO `tag` (`tid`, `cid`, `tname`) VALUES
@@ -278,20 +260,37 @@ INSERT INTO `tag` (`tid`, `cid`, `tname`) VALUES
     (2020, 1004, '3-Stars'),
     (2021, 1004, '2-Stars'),
     (2022, 1004, '1-Star'),
-    (2023, 1005, 'done'),
-    (2024, 1005, 'next'),
-    (2025, 1005, 'maybe'),
-    (2026, 1005, 'waiting'),
-    (2027, 1006, 'high'),
-    (2028, 1006, 'medium'),
-    (2029, 1006, 'low')
+    (2023, 1006, 'done'),
+    (2024, 1006, 'next'),
+    (2025, 1006, 'maybe'),
+    (2026, 1006, 'waiting'),
+    (2027, 1007, 'high'),
+    (2028, 1007, 'medium'),
+    (2029, 1007, 'low')
 ;
 
-ALTER TABLE `filetag`
-  ADD KEY `filid` (`filid`),
-  ADD KEY `tid` (`tid`);
+INSERT INTO `filetag` (`filid`, `tid`) VALUES
+(4000, 2002),
+(4000, 2009),
+(4000, 2019),
+(4001, 2002),
+(4001, 2009),
+(4001, 2019),
+(4002, 2012),
+(4002, 2003),
+(4003, 2002),
+(4003, 2020),
+(4004, 2013),
+(4004, 2021),
+(4005, 2023),
+(4006, 2023),
+(4007, 2023),
+(4008, 2024),
+(4009, 2024),
+(4010, 2025),
+(4011, 2014)
+;
 
-ALTER TABLE `indexedfiles`
-  ADD PRIMARY KEY (`filid`),
-  ADD KEY `folid` (`folid`);
-  
+
+-----------
+
