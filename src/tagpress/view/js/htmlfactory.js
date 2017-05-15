@@ -19,20 +19,20 @@ export const getNewFontFaceHTML = (fontFile) => {
 
 export const getFontThumbnailPreview = (fontFile) => {
     var fontFaceName = fontFile.name.substr(0, fontFile.name.lastIndexOf('.')) || fontFile.name;
-    return '<div class="gallery"><p style="font-family: ' + fontFaceName + '; font-size: 30px; ' +
+    return '<div class="gallery droppable"><p style="font-family: ' + fontFaceName + '; font-size: 30px; ' +
         'text-align: center; padding: 15px;">' +
         global.defaultFontPreviewLine + '</p><div class="desc"><p title="open file" class="file-name">' +
         fontFile.name +
-        '</p><p id="file-id-' + fontFile.fid + '" class="tags"></p></div></div>'
+        '</p><div id="file-id-' + fontFile.fid + '" class="tags"></div></div></div>'
         // '</p><p class="tags" style="margin-left: 10px; margin-right: 10px;"><kbd>serif</kbd><kbd>sans-serif</kbd><kbd>mono</kbd></p></div></div>';
 }
 
 export const getImageThumbnailPreview = (file) => {
-    return '<div class="gallery"><img src="' +
+    return '<div class="gallery droppable"><img src="' +
         'file://' + path.resolve(file.thumbnail) +
         '"><div class="desc"><p title="open file" class="file-name">' +
         file.name +
-        '</p><p id="file-id-' + file.fid + '" class="tags"></p></div></div>';
+        '</p><div id="file-id-' + file.fid + '" class="tags"></div></div></div>';
 }
 
 export const showTags = (files) => {
@@ -42,10 +42,17 @@ export const showTags = (files) => {
             if (files.hasOwnProperty(filid)) {
                 var tagp = document.querySelector('#file-id-' + filid);
                 files[filid].tags.forEach(function(tag) {
+                    // var tagkbd = document.createElement('kbd');
+                    // tagkbd.innerHTML = tag.name;
+                    // tagkbd.style.backgroundColor = tag.category.color;
+                    // tagkbd.title = "tag: " + tag.name + "; category: " + tag.category.name;
+
                     var tagkbd = document.createElement('kbd');
                     tagkbd.innerHTML = tag.name;
                     tagkbd.style.backgroundColor = tag.category.color;
-                    tagkbd.title = "tag: " + tag.name + "; category: " + tag.category.name;
+                    tagkbd.style.cssFloat = "left";
+                    tagkbd.id = 'tagkbd-' + tag.category.name + '-' + tag.category.name;
+
                     var icon = document.createElement('i');
                     icon.className = 'glyphicon glyphicon-remove tag-remove';
                     icon.id = 'remove-' + filid + '-' + tag.name;
@@ -62,7 +69,7 @@ export const showTags = (files) => {
                     icon.addEventListener('click', function(x) {
                         console.log('to remove ' + tag.name);
                     });
-                    tagp.appendChild(tagkbd);
+                    // tagp.appendChild(tagkbd);
                 });
             }
         }
@@ -86,7 +93,7 @@ export const showTagInventory = (tags, emptyCategories, onAddNewTag, onRemoveTag
                     tagkbd.style.backgroundColor = tag.category.color;
                     tagkbd.style.cssFloat = "left";
                     tagkbd.id = 'tagkbd-' + category + '-' + tag.name;
-                    tagkbd.className = 'tag-inventory-draggable draggable'
+                    tagkbd.className = 'draggable'
 
                     var eicon = document.createElement('i');
                     eicon.className = 'glyphicon glyphicon-pencil tag-edit';
@@ -272,8 +279,9 @@ export const showNewTag = (categoryName, tagName, categoryColor, onEditTag, onRe
     tagkbd.innerHTML = tagName;
     tagkbd.style.backgroundColor = categoryColor;
     tagkbd.style.cssFloat = "left";
-    tagkbd.title = 'tag: ' + tagName + ';category: ' + categoryName;
+    // tagkbd.title = 'tag: ' + tagName + ';category: ' + categoryName;
     tagkbd.id = 'tagkbd-' + categoryName + '-' + tagName;
+    tagkbd.className = 'draggable';
 
     var eicon = document.createElement('i');
     eicon.className = 'glyphicon glyphicon-pencil tag-edit';
