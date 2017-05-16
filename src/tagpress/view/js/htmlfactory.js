@@ -1,6 +1,8 @@
 import { global } from '../../global/global'
 import path from 'path'
 import interact from 'interact.js'
+import 'jquery-ui-bundle';
+// import $ from 'jquery'
 
 export const getFileNavigationFolderHTML = (folder) => {
     return '<button type="button" class="folder"><p class="folder-name">' +
@@ -20,7 +22,7 @@ export const getNewFontFaceHTML = (fontFile) => {
 
 export const getFontThumbnailPreview = (fontFile) => {
     var fontFaceName = fontFile.name.substr(0, fontFile.name.lastIndexOf('.')) || fontFile.name;
-    return '<div class="gallery droppable"><p style="font-family: ' + fontFaceName + '; font-size: 30px; ' +
+    return '<div class="gallery droppable" data-filid="' + fontFile.fid + '"><p style="font-family: ' + fontFaceName + '; font-size: 30px; ' +
         'text-align: center; padding: 15px;">' +
         global.defaultFontPreviewLine + '</p><div class="desc"><p title="open file" class="file-name">' +
         fontFile.name +
@@ -29,7 +31,7 @@ export const getFontThumbnailPreview = (fontFile) => {
 }
 
 export const getImageThumbnailPreview = (file) => {
-    return '<div class="gallery droppable"><img src="' +
+    return '<div class="gallery droppable" data-filid="' + file.fid + '"><img src="' +
         'file://' + path.resolve(file.thumbnail) +
         '"><div class="desc"><p title="open file" class="file-name">' +
         file.name +
@@ -194,8 +196,8 @@ export const showInputNewCategory = (onCreateNewCategory) => {
                         <input type="text" maxlength="20" placeholder="Category name" class="form-control" id="newcategory-name">\
                     </div>\
                     <div class="row last-line">\
-                        <div class="col-md-8">\
-                            <select class="form-control" id="newcategory-color">\
+                        <div class="col-md-8 thadathada">\
+                            <select class="selectpicker" id="newcategory-color">\
                             </select>\
                         </div>\
                             <button type="button" class="btn btn-default" style="float: right; margin-right: 15px" id="create-category">Create</button>\
@@ -208,14 +210,26 @@ export const showInputNewCategory = (onCreateNewCategory) => {
     global.CSSColors.forEach(function(color) {
         if (global.lightCSSColors.indexOf(color) == -1) {
             var option = document.createElement('option');
-            option.class = 'category-color-option';
+            // option.class = 'category-color-option';
+            // console.log(color);
             option.style.color = 'white';
             option.value = color;
             option.style.background = color;
             option.innerText = color;
+            // console.log(option);
+            // console.log(categoryColor);
             categoryColor.appendChild(option);
         }
     });
+    // document.querySelector('#file-preview').appendChild(categoryColor);
+    var dd = document.createElement('div');
+    // dd.className = 'btn btn-group bootstrap-select';
+    dd.appendChild(categoryColor);
+    document.querySelector('#file-preview').appendChild(dd);
+    // console.log($('selectpicker').selectpicker)
+    // $('selectpicker').selectpicker('refresh');
+
+    document.querySelector('#file-preview').appendChild(categoryColor);
     document.querySelector('#newcategory-name').addEventListener('keydown', function(e) {
         if (e.keyCode == 32) { // Space key`
             e.preventDefault();
@@ -443,10 +457,36 @@ export const makeInventoryTagsDraggable = (onTag, onRemoveTagFromAFile) => {
                 tagkbd.remove();
             });
             tagkbd.appendChild(icon);
-            onTag(tagDropZone.getAttribute('data-filid'), tagkbd.getAttribute('data-cname'), tagkbd.getAttribute('data-tname'), function() {
-                tagDropZone.appendChild(tagkbd);
+            onTag(tagDropZone.getAttribute('data-filid'), tagkbd.getAttribute('data-cname'), tagkbd.getAttribute('data-tname'), function(filid) {
+                console.log(filid);
+                var dropto = document.querySelector('#file-id-' + filid);
+
+                var droptagkbd = tagkbd.cloneNode(true);
+                var icon = document.createElement('i');
+                icon.className = 'glyphicon glyphicon-remove tag-remove';
+                icon.style.display = "none";
+                icon.title = 'remove tag';
+                icon.setAttribute('data-filid', tagkbd.getAttribute('data-filid'));
+                icon.setAttribute('data-tname', tagkbd.getAttribute('data-tname'));
+                icon.setAttribute('data-cname', tagkbd.getAttribute('data-cname'));
+                droptagkbd.addEventListener("mouseout", function(x) {
+                    this.lastChild.style.display = "none";
+                });
+                droptagkbd.addEventListener("mouseover", function(x) {
+                    this.lastChild.style.display = "inline-block";
+                });
+                icon.addEventListener('click', function(x) {
+                    onRemoveTagFromAFile(this.getAttribute('data-filid'), this.getAttribute('data-tname'), this.getAttribute('data-cname'));
+                    droptagkbd.remove();
+                });
+                droptagkbd.appendChild(icon);
+
+                dropto.appendChild(droptagkbd);
             }, function() {
+                // if(tagkbd)
                 tagkbd.remove();
+            }, function() {
+
             });
         }
     });

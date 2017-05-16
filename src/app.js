@@ -6,8 +6,14 @@ import path from 'path'
 import jetpack from 'fs-jetpack';
 import env from './env';
 import interact from 'interact.js'
-import $ from 'jquery';
-import 'jquery-ui';
+import { webpack, ProvidePlugin } from 'webpack'
+
+var a = new ProvidePlugin({
+    $: "jquery",
+    jQuery: "jquery",
+    "window.jQuery": "jquery"
+});
+import 'jquery-ui-bundle'
 
 import { listAllFiles } from './tagpress/model/tagpressfilehandler/validator'
 import { Folder } from './tagpress/model/fileinformation/folder'
@@ -52,10 +58,20 @@ filequery.listAllIndexedFolders(function(err, rows) {
     }
 });
 
+// document.querySelector('#file-preview').innerHTML = '<select class="selectpicker">\
+//   <option>Mustard</option>\
+//   <option>Ketchup</option>\
+//   <option>Ketchup</option>\
+//   <option>Ketchup</option>\
+//   <option>Ketchup</option>\
+//   <option>Barbecue</option>\
+// </select>';
+
 var onRemoveTagFromAFile = function(filid, tname, cname, callback) {
-    // alert(filid + ' ' + tname);
     filequery.removeTagFromFile(filid, tname, cname, callback);
 }
+
+var selectedFiles = [];
 
 var showFiles = function(folder) {
     // console.log(folder);
@@ -67,25 +83,29 @@ var showFiles = function(folder) {
             } else {
                 document.querySelector("#file-preview").innerHTML = '';
                 var dbconnect = new DBConnect();
-                // var ol = document.createElement('ol');
-                // ol.id = 'selectable';
+                var ol = document.createElement('ol');
+                ol.id = 'selectable';
                 rows.forEach(function(row) {
                     var file = new File(folder.path + row.filename);
                     file.fid = row.filid;
-                    var div = document.createElement('div');
+                    // var div = document.createElement('div');
+                    var li = document.createElement('li');
                     if (file.isFont) {
                         var fontFace = document.createElement('style');
                         fontFace.appendChild(document.createTextNode(hf.getNewFontFaceHTML(file)));
                         document.head.appendChild(fontFace);
-                        div.innerHTML = hf.getFontThumbnailPreview(file);
+                        // div.innerHTML = hf.getFontThumbnailPreview(file);
+                        li.innerHTML = hf.getFontThumbnailPreview(file);
                     } else {
-                        div.innerHTML = hf.getImageThumbnailPreview(file);
+                        // div.innerHTML = hf.getImageThumbnailPreview(file);
+                        li.innerHTML = hf.getImageThumbnailPreview(file);
                     }
-                    div.className = 'ui-state-default';
-                    // ol.appendChild(div);
-                    document.querySelector("#file-preview").appendChild(div);
+                    // div.className = 'ui-state-default';
+                    li.className = 'ui-state-default';
+                    ol.appendChild(li);
+                    // document.querySelector("#file-preview").appendChild(div);
                 });
-                // document.querySelector("#file-preview").appendChild(ol);
+                document.querySelector("#file-preview").appendChild(ol);
                 var files = [];
                 tagMap.forEach(function(tag) {
                     if (tag.filid in files) {} else {
@@ -95,12 +115,16 @@ var showFiles = function(folder) {
                     files[tag.filid].tags.push(new Tag(tag.tname, new Category(tag.cname, tag.color)));
                 });
                 hf.showTags(files, onRemoveTagFromAFile);
-                // $('#selectable').selectable();
-                // document.querySelectorAll('.tags').forEach(function(div) {
-                //     console.log(div);
-                //     div.style.display = "none";
-                // });
-                // document.querySelector('#tag-inventory').style.pointerEvents = "none !important";
+                $('#selectable').selectable({
+                    filter: '.gallery',
+                    selected: function() {
+                        selectedFiles = [];
+                        $('.ui-selected', this).each(function() {
+                            selectedFiles.push(this.getAttribute('data-filid'));
+                        });
+                        console.log(selectedFiles);
+                    }
+                });
             }
         });
     });
@@ -212,7 +236,13 @@ document.querySelector('#tag-inventory').style.overflowY = "scroll";
 
 
 var onTag = function(filid, cname, tname, successCallback, errCallback) {
-    filequery.tagFile(filid, cname, tname, successCallback, errCallback);
+    if (selectedFiles.length == 0) {
+        filequery.tagFile(filid, cname, tname, successCallback, errCallback);
+    } else {
+        selectedFiles.forEach(function(_filid) {
+            filequery.tagFile(_filid, cname, tname, successCallback, errCallback);
+        })
+    }
 }
 
 hf.makeInventoryTagsDraggable(onTag, onRemoveTagFromAFile);

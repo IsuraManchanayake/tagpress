@@ -154,10 +154,11 @@ export const tagFile = (filid, cname, tname, successCallback, errCallback, db) =
             } else {
                 var tid = rows[0].tid;
                 dbconnect.con.query('insert into filetag(filid, tid) values (' + filid + ', ' + tid + ')', function(err) {
+                    dbconnect.con.end();
                     if (err) {
                         errCallback();
                     } else {
-                        successCallback();
+                        successCallback(filid);
                     }
                 });
             }
@@ -171,6 +172,7 @@ export const removeTagFromFile = (filid, tname, cname, callback, db) => {
         ' tag.tname="' + tname +
         '" and category.cname="' + cname + '") as p)',
         function(err) {
+            dbconnect.con.end();
             if (err) {
 
             } else {
