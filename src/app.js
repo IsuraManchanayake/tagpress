@@ -6,6 +6,8 @@ import path from 'path'
 import jetpack from 'fs-jetpack';
 import env from './env';
 import interact from 'interact.js'
+import $ from 'jquery';
+import 'jquery-ui';
 
 import { listAllFiles } from './tagpress/model/tagpressfilehandler/validator'
 import { Folder } from './tagpress/model/fileinformation/folder'
@@ -50,6 +52,11 @@ filequery.listAllIndexedFolders(function(err, rows) {
     }
 });
 
+var onRemoveTagFromAFile = function(filid, tname, cname, callback) {
+    // alert(filid + ' ' + tname);
+    filequery.removeTagFromFile(filid, tname, cname, callback);
+}
+
 var showFiles = function(folder) {
     // console.log(folder);
     var ul = document.createElement('ul');
@@ -60,6 +67,8 @@ var showFiles = function(folder) {
             } else {
                 document.querySelector("#file-preview").innerHTML = '';
                 var dbconnect = new DBConnect();
+                // var ol = document.createElement('ol');
+                // ol.id = 'selectable';
                 rows.forEach(function(row) {
                     var file = new File(folder.path + row.filename);
                     file.fid = row.filid;
@@ -72,8 +81,11 @@ var showFiles = function(folder) {
                     } else {
                         div.innerHTML = hf.getImageThumbnailPreview(file);
                     }
+                    div.className = 'ui-state-default';
+                    // ol.appendChild(div);
                     document.querySelector("#file-preview").appendChild(div);
                 });
+                // document.querySelector("#file-preview").appendChild(ol);
                 var files = [];
                 tagMap.forEach(function(tag) {
                     if (tag.filid in files) {} else {
@@ -82,7 +94,8 @@ var showFiles = function(folder) {
                     }
                     files[tag.filid].tags.push(new Tag(tag.tname, new Category(tag.cname, tag.color)));
                 });
-                hf.showTags(files);
+                hf.showTags(files, onRemoveTagFromAFile);
+                // $('#selectable').selectable();
                 // document.querySelectorAll('.tags').forEach(function(div) {
                 //     console.log(div);
                 //     div.style.display = "none";
@@ -195,259 +208,11 @@ filequery.getAllTags(function(tagrows) {
     });
 });
 
-// target elements with the "draggable" class
-/*
-interact('.draggable')
-    .draggable({
-        // enable inertial throwing
-        inertia: true,
-        // keep the element within the area of it's parent
-        restrict: {
-            // restriction: "parent",
-            // restriction: "#file-nav",
-            endOnly: true,
-            elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-        },
-        // enable autoScroll
-        autoScroll: true,
-
-        // call this function on every dragmove event
-        onmove: global.dragMoveListener
-            // call this function on every dragend event
-            // onend: function(event) {
-            //     var textEl = event.target.querySelector('p');
-
-        //     textEl && (textEl.textContent =
-        //         'moved a distance of ' +
-        //         (Math.sqrt(event.dx * event.dx +
-        //             event.dy * event.dy) | 0) + 'px');
-        // }
-    }).on('move', function(event) {
-        var interaction = event.interaction;
-        if (interaction.pointerIsDown && !interaction.interacting() && event.currentTarget.getAttribute('clonable') != 'false') {
-            var original = event.currentTarget;
-            var clone = event.currentTarget.cloneNode(true);
-            var x = clone.offsetLeft;
-            var y = clone.offsetTop;
-            clone.setAttribute('clonable', 'false');
-            clone.style.position = "absolute";
-            clone.style.left = original.offsetLeft + "px";
-            clone.style.top = original.offsetTop + "px";
-            original.parentElement.appendChild(clone);
-            interaction.start({ name: 'drag' }, event.interactable, clone);
-        }
-    });
+document.querySelector('#tag-inventory').style.overflowY = "scroll";
 
 
+var onTag = function(filid, cname, tname, successCallback, errCallback) {
+    filequery.tagFile(filid, cname, tname, successCallback, errCallback);
+}
 
-
-
-
-// this is used later in the resizing and gesture demos
-window.dragMoveListener = global.dragMoveListener;
-*/
-// import $ from 'jquery'
-
-// console.log($('#file-nav'));
-
-// var startPos = { x: 0, y: 0 };
-
-// interact('.draggable')
-//     .draggable({
-//         onmove: dragMoveListener,
-//         onstart: dragStartListener,
-//         inertia: true,
-//         snap: {
-//             targets: [startPos],
-//             range: Infinity,
-//             relativePoints: [{ x: 0.5, y: 0.5 }],
-//             endOnly: true
-//         }
-//     });
-
-// function dragMoveListener(event) {
-//     var target = event.target,
-//         // keep the dragged position in the data-x/data-y attributes
-//         x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-//         y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-//     // translate the element
-//     target.style.webkitTransform =
-//         target.style.transform =
-//         'translate(' + x + 'px, ' + y + 'px)';
-
-//     // update the posiion attributes
-//     target.setAttribute('data-x', x);
-//     target.setAttribute('data-y', y);
-// }
-
-// function dragStartListener(event) {
-//     var rect = interact.getElementRect(event.target);
-
-//     // record center point when starting a drag
-//     startPos.x = rect.left + rect.width / 2;
-//     startPos.y = rect.top + rect.height / 2;
-// }
-// document.querySelector('#tag-inventory').style.overflowY = "";
-// document.querySelector('#tag-inventory').style.overflow = "";
-
-var startPos = null;
-
-interact('.draggable').draggable({
-    snap: {
-        targets: [startPos],
-        range: Infinity,
-        relativePoints: [{ x: 0.5, y: 0.5 }],
-        endOnly: true
-    },
-    inertia: true,
-    onstart: function(event) {
-        var rect = interact.getElementRect(event.target);
-        document.querySelector('#tag-inventory').style.overflowY = "";
-        console.log('kjhbj');
-        // record center point when starting the very first a drag
-        startPos = {
-            x: rect.left + rect.width / 2,
-            y: rect.top + rect.height / 2
-        }
-
-        event.interactable.draggable({
-            snap: {
-                targets: [startPos]
-            }
-        });
-    },
-    // call this function on every dragmove event
-    onmove: function(event) {
-        var target = event.target,
-            // keep the dragged position in the data-x/data-y attributes
-            x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-            y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-        // translate the element
-        target.style.webkitTransform =
-            target.style.transform =
-            'translate(' + x + 'px, ' + y + 'px)';
-
-        // update the posiion attributes
-        target.setAttribute('data-x', x);
-        target.setAttribute('data-y', y);
-        // target.classList.add('getting--dragged');
-    },
-    onend: function(event) {
-        document.querySelector('#tag-inventory').style.overflowY = "scroll";
-        // event.target.classList.remove('getting--dragged');
-        // if(event.target.classList.contains('been'))
-        if (!event.target.classList.contains('dropped')) {
-            // if (!event.relatedTarget.classList.contains('caught--it')) {
-            event.target.remove();
-        }
-        event.target.classList.remove('draggable');
-        event.target.style.position = "";
-        // event.target.style.top = "";
-        // event.target.style.left = "";
-        event.target.style.transform = "";
-        // document.querySelector('#do-bar').appendChild(event.target);
-    }
-}).on('move', function(event) {
-    var interaction = event.interaction;
-    if (interaction.pointerIsDown && !interaction.interacting() && event.currentTarget.getAttribute('clonable') != 'false') {
-        var original = event.currentTarget;
-        var clone = event.currentTarget.cloneNode(true);
-        var x = clone.offsetLeft;
-        var y = clone.offsetTop;
-        clone.setAttribute('clonable', 'false');
-        clone.style.position = "absolute";
-        clone.style.left = original.offsetLeft + "px";
-        clone.style.top = original.offsetTop + "px";
-        clone.lastChild.remove();
-        clone.lastChild.remove();
-        original.parentElement.appendChild(clone);
-        interaction.start({ name: 'drag' }, event.interactable, clone);
-    }
-});
-
-interact('.droppable').dropzone({
-
-    accept: '.draggable',
-    overlap: .1,
-
-    //     ondropactivate: function(event) {
-    //         event.target.classList.add('can--drop');
-    //     },
-    ondragenter: function(event) {
-        var draggableElement = event.relatedTarget,
-            dropzoneElement = event.target,
-            dropRect = interact.getElementRect(dropzoneElement),
-            dropCenter = {
-                x: dropRect.left + dropRect.width / 2,
-                y: dropRect.top + dropRect.height / 2
-            };
-        // feedback the possibility of a drop
-        // dropzoneElement.classList.add('can--catch');
-        // draggableElement.classList.add('drop--me');
-        event.target.classList.add('drop--me');
-        event.relatedTarget.classList.add('dropped');
-        // console.log('shit');
-        event.draggable.draggable({
-            snap: {
-                targets: [dropCenter]
-            }
-        });
-        // if (!event.relatedTarget.classList.contains('dropped')) {
-        //     event.draggable.draggable({
-        //         snap: {
-        //             targets: [startPos]
-        //         }
-        //     });
-        // }
-    },
-    ondragleave: function(event) {
-        event.draggable.draggable({
-            snap: {
-                targets: [{ x: Infinity, y: Infinity }]
-            }
-        });
-        // remove the drop feedback style
-        // console.log(event.target);
-        // console.log(event.relatedTarget); 
-        // event.target.classList.remove('can--catch', 'caught--it');
-        event.target.classList.remove('drop--me');
-        event.relatedTarget.classList.remove('dropped');
-        // event.relatedTarget.classList.remove('left-someone');
-    },
-    ondrop: function(event) {
-        event.target.classList.remove('drop--me');
-        // event.target.appendChild(event.relatedTarget);
-        var tagkbd = event.relatedTarget;
-        var icon = document.createElement('i');
-        icon.className = 'glyphicon glyphicon-remove tag-remove';
-        // icon.id = 'remove-' + filid + '-' + tag.name;
-        icon.style.display = "none";
-        icon.title = 'remove tag';
-        tagkbd.addEventListener("mouseout", function(x) {
-            this.lastChild.style.display = "none";
-        });
-        tagkbd.addEventListener("mouseover", function(x) {
-            this.lastChild.style.display = "inline-block";
-        });
-        icon.addEventListener('click', function(x) {
-            console.log('to remove ' + tag.name);
-        });
-        tagkbd.appendChild(icon);
-        event.target.querySelector('.tags').appendChild(tagkbd);
-        //         console.log("Index of dropped node: " + (event.target));
-        //         console.log("Index of dragged node: " + getNodeIndex(event.relatedTarget.parentNode));
-        //         //event.relatedTarget.textContent = 'Dropped';
-        //         console.log("Dropped!");
-        //         console.log("related target: " + event.relatedTarget.parentNode);
-        //         console.log(event.draggable);
-        // event.relatedTarget.classList.add('no-shit');
-        // event.target.classList.add('caught--it');
-    },
-    //     ondropdeactivate: function(event) {
-    //         // remove active dropzone feedback
-    //         event.target.classList.remove('can--drop');
-    //         event.target.classList.remove('can--catch');
-    //     }
-});
+hf.makeInventoryTagsDraggable(onTag, onRemoveTagFromAFile);

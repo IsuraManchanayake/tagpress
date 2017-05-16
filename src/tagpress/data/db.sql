@@ -40,6 +40,7 @@ CREATE TABLE `filetag` (
   FOREIGN KEY(tid) REFERENCES tag(tid) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+ALTER TABLE `filetag` ADD UNIQUE (filid, tid);
 
 INSERT INTO `indexedfolders` (`folid`, `fpath`) VALUES
 (3000, '/home/isura/Downloads/'),

@@ -1,5 +1,6 @@
 import { global } from '../../global/global'
 import path from 'path'
+import interact from 'interact.js'
 
 export const getFileNavigationFolderHTML = (folder) => {
     return '<button type="button" class="folder"><p class="folder-name">' +
@@ -23,8 +24,8 @@ export const getFontThumbnailPreview = (fontFile) => {
         'text-align: center; padding: 15px;">' +
         global.defaultFontPreviewLine + '</p><div class="desc"><p title="open file" class="file-name">' +
         fontFile.name +
-        '</p><div id="file-id-' + fontFile.fid + '" class="tags"></div></div></div>'
-        // '</p><p class="tags" style="margin-left: 10px; margin-right: 10px;"><kbd>serif</kbd><kbd>sans-serif</kbd><kbd>mono</kbd></p></div></div>';
+        '</p><div id="file-id-' + fontFile.fid + '" data-filid="' + fontFile.fid + '" class="tags"></div></div></div>';
+    // '</p><p class="tags" style="margin-left: 10px; margin-right: 10px;"><kbd>serif</kbd><kbd>sans-serif</kbd><kbd>mono</kbd></p></div></div>';
 }
 
 export const getImageThumbnailPreview = (file) => {
@@ -32,10 +33,10 @@ export const getImageThumbnailPreview = (file) => {
         'file://' + path.resolve(file.thumbnail) +
         '"><div class="desc"><p title="open file" class="file-name">' +
         file.name +
-        '</p><div id="file-id-' + file.fid + '" class="tags"></div></div></div>';
+        '</p><div id="file-id-' + file.fid + '" data-filid="' + file.fid + '" class="tags"></div></div></div>';
 }
 
-export const showTags = (files) => {
+export const showTags = (files, onRemoveTagFromAFile) => {
     // console.log(files);
     if (!!Object.keys(files).length) {
         for (var filid in files) {
@@ -52,10 +53,15 @@ export const showTags = (files) => {
                     tagkbd.style.backgroundColor = tag.category.color;
                     tagkbd.style.cssFloat = "left";
                     tagkbd.id = 'tagkbd-' + tag.category.name + '-' + tag.category.name;
+                    tagkbd.setAttribute('data-tname', tag.name);
+                    tagkbd.setAttribute('data-cname', tag.category.name);
 
                     var icon = document.createElement('i');
                     icon.className = 'glyphicon glyphicon-remove tag-remove';
-                    icon.id = 'remove-' + filid + '-' + tag.name;
+                    // icon.id = 'remove-' + filid + '-' + tag.name;
+                    icon.setAttribute('data-filid', filid);
+                    icon.setAttribute('data-tname', tag.name);
+                    icon.setAttribute('data-cname', tag.category.name);
                     icon.style.display = "none";
                     icon.title = 'remove tag';
                     tagkbd.appendChild(icon);
@@ -67,7 +73,10 @@ export const showTags = (files) => {
                         this.lastChild.style.display = "inline-block";
                     });
                     icon.addEventListener('click', function(x) {
-                        console.log('to remove ' + tag.name);
+                        // console.log('remove');
+                        onRemoveTagFromAFile(this.getAttribute('data-filid'), this.getAttribute('data-tname'), this.getAttribute('data-cname'), function() {
+                            tagkbd.remove();
+                        });
                     });
                     // tagp.appendChild(tagkbd);
                 });
@@ -77,12 +86,12 @@ export const showTags = (files) => {
 }
 
 export const showTagInventory = (tags, emptyCategories, onAddNewTag, onRemoveTag, onEditTag, onAddNewCategory) => {
-    console.log(tags);
+    // console.log(tags);
     if (!!Object.keys(tags).length) {
         for (var category in tags) {
             if (tags.hasOwnProperty(category)) {
                 var categoryDiv = document.createElement('div');
-                var categoryH = document.createElement('h5');
+                var categoryH = document.createElement('h4');
                 categoryH.innerHTML = category;
                 categoryDiv.className = "tag-inventory-category";
                 categoryDiv.id = "category-div-" + category;
@@ -93,7 +102,9 @@ export const showTagInventory = (tags, emptyCategories, onAddNewTag, onRemoveTag
                     tagkbd.style.backgroundColor = tag.category.color;
                     tagkbd.style.cssFloat = "left";
                     tagkbd.id = 'tagkbd-' + category + '-' + tag.name;
-                    tagkbd.className = 'draggable'
+                    tagkbd.className = 'draggable';
+                    tagkbd.setAttribute('data-tname', tag.name);
+                    tagkbd.setAttribute('data-cname', tag.category.name);
 
                     var eicon = document.createElement('i');
                     eicon.className = 'glyphicon glyphicon-pencil tag-edit';
@@ -145,7 +156,7 @@ export const showTagInventory = (tags, emptyCategories, onAddNewTag, onRemoveTag
     }
     emptyCategories.forEach(function(category) {
         var categoryDiv = document.createElement('div');
-        var categoryH = document.createElement('h5');
+        var categoryH = document.createElement('h4');
         categoryH.innerHTML = category.name;
         categoryDiv.className = "tag-inventory-category";
         categoryDiv.id = "category-div-" + category.name;
@@ -222,7 +233,7 @@ export const showInputNewCategory = (onCreateNewCategory) => {
 export const showNewCategory = (categoryName, categoryColor, onAddNewTag) => {
     // console.log('shit');
     var categoryDiv = document.createElement('div');
-    var categoryH = document.createElement('h5');
+    var categoryH = document.createElement('h4');
     categoryH.innerHTML = categoryName;
     categoryDiv.className = "tag-inventory-category";
     categoryDiv.id = "category-div-" + categoryName;
@@ -282,6 +293,8 @@ export const showNewTag = (categoryName, tagName, categoryColor, onEditTag, onRe
     // tagkbd.title = 'tag: ' + tagName + ';category: ' + categoryName;
     tagkbd.id = 'tagkbd-' + categoryName + '-' + tagName;
     tagkbd.className = 'draggable';
+    tagkbd.setAttribute('data-tname', tagName);
+    tagkbd.setAttribute('data-cname', categoryName);
 
     var eicon = document.createElement('i');
     eicon.className = 'glyphicon glyphicon-pencil tag-edit';
@@ -317,4 +330,124 @@ export const showNewTag = (categoryName, tagName, categoryColor, onEditTag, onRe
         onEditTag(this.getAttribute('data-category-name'), this.getAttribute('data-tag-name'));
     });
     categoryDiv.insertBefore(tagkbd, categoryDiv.childNodes[categoryDiv.childNodes.length - 2]);
+}
+
+export const makeInventoryTagsDraggable = (onTag, onRemoveTagFromAFile) => {
+    var startPos = null;
+    interact('.draggable').draggable({
+        snap: {
+            targets: [startPos],
+            range: Infinity,
+            relativePoints: [{ x: 0.5, y: 0.5 }],
+            endOnly: true
+        },
+        inertia: true,
+        onstart: function(event) {
+            var rect = interact.getElementRect(event.target);
+            document.querySelector('#tag-inventory').style.overflowY = "";
+            console.log('kjhbj');
+            startPos = {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2
+            }
+            event.interactable.draggable({
+                snap: {
+                    targets: [startPos]
+                }
+            });
+        },
+        onmove: function(event) {
+            var target = event.target,
+                x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+                y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+            target.style.webkitTransform =
+                target.style.transform =
+                'translate(' + x + 'px, ' + y + 'px)';
+            target.setAttribute('data-x', x);
+            target.setAttribute('data-y', y);
+        },
+        onend: function(event) {
+            document.querySelector('#tag-inventory').style.overflowY = "scroll";
+            if (!event.target.classList.contains('dropped')) {
+                event.target.remove();
+            }
+            event.target.classList.remove('draggable');
+            event.target.style.position = "";
+            event.target.style.transform = "";
+        }
+    }).on('move', function(event) {
+        var interaction = event.interaction;
+        if (interaction.pointerIsDown && !interaction.interacting() && event.currentTarget.getAttribute('clonable') != 'false') {
+            var original = event.currentTarget;
+            var clone = event.currentTarget.cloneNode(true);
+            var x = clone.offsetLeft;
+            var y = clone.offsetTop;
+            clone.setAttribute('clonable', 'false');
+            clone.style.position = "absolute";
+            clone.style.left = original.offsetLeft + "px";
+            clone.style.top = original.offsetTop + "px";
+            clone.lastChild.remove();
+            clone.lastChild.remove();
+            original.parentElement.appendChild(clone);
+            interaction.start({ name: 'drag' }, event.interactable, clone);
+        }
+    });
+
+    interact('.droppable').dropzone({
+        accept: '.draggable',
+        overlap: .1,
+        ondragenter: function(event) {
+            var draggableElement = event.relatedTarget,
+                dropzoneElement = event.target,
+                dropRect = interact.getElementRect(dropzoneElement),
+                dropCenter = {
+                    x: dropRect.left + dropRect.width / 2,
+                    y: dropRect.top + dropRect.height / 2
+                };
+            event.target.classList.add('drop--me');
+            event.relatedTarget.classList.add('dropped');
+            event.draggable.draggable({
+                snap: {
+                    targets: [dropCenter]
+                }
+            });
+        },
+        ondragleave: function(event) {
+            event.draggable.draggable({
+                snap: {
+                    targets: [{ x: Infinity, y: Infinity }]
+                }
+            });
+            event.target.classList.remove('drop--me');
+            event.relatedTarget.classList.remove('dropped');
+        },
+        ondrop: function(event) {
+            event.target.classList.remove('drop--me');
+            var tagkbd = event.relatedTarget;
+            var icon = document.createElement('i');
+            var tagDropZone = event.target.querySelector('.tags');
+            icon.className = 'glyphicon glyphicon-remove tag-remove';
+            icon.style.display = "none";
+            icon.title = 'remove tag';
+            icon.setAttribute('data-filid', tagDropZone.getAttribute('data-filid'));
+            icon.setAttribute('data-tname', tagkbd.getAttribute('data-tname'));
+            icon.setAttribute('data-cname', tagkbd.getAttribute('data-cname'));
+            tagkbd.addEventListener("mouseout", function(x) {
+                this.lastChild.style.display = "none";
+            });
+            tagkbd.addEventListener("mouseover", function(x) {
+                this.lastChild.style.display = "inline-block";
+            });
+            icon.addEventListener('click', function(x) {
+                onRemoveTagFromAFile(this.getAttribute('data-filid'), this.getAttribute('data-tname'), this.getAttribute('data-cname'));
+                tagkbd.remove();
+            });
+            tagkbd.appendChild(icon);
+            onTag(tagDropZone.getAttribute('data-filid'), tagkbd.getAttribute('data-cname'), tagkbd.getAttribute('data-tname'), function() {
+                tagDropZone.appendChild(tagkbd);
+            }, function() {
+                tagkbd.remove();
+            });
+        }
+    });
 }

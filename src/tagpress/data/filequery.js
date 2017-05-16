@@ -133,6 +133,7 @@ export const checkTagAvailabilityBeforeRemoveTag = (categoryName, tagName, callb
         ' tag.tname="' + tagName +
         '" and category.cname="' + categoryName + '")',
         function(err, rows) {
+            dbconnect.con.end();
             if (err) {
                 callback(err);
             } else if (rows.length > 0) {
@@ -141,4 +142,39 @@ export const checkTagAvailabilityBeforeRemoveTag = (categoryName, tagName, callb
                 callback(null, false);
             }
         })
+}
+
+export const tagFile = (filid, cname, tname, successCallback, errCallback, db) => {
+    var dbconnect = db || new DBConnect();
+    dbconnect.con.query('select tid from tag, category where tag.cid=category.cid and tag.tname="' +
+        tname + '" and category.cname="' + cname + '"',
+        function(err, rows) {
+            if (err) {
+                errCallback();
+            } else {
+                var tid = rows[0].tid;
+                dbconnect.con.query('insert into filetag(filid, tid) values (' + filid + ', ' + tid + ')', function(err) {
+                    if (err) {
+                        errCallback();
+                    } else {
+                        successCallback();
+                    }
+                });
+            }
+        });
+}
+
+export const removeTagFromFile = (filid, tname, cname, callback, db) => {
+    var dbconnect = db || new DBConnect();
+    dbconnect.con.query('delete from filetag where filid=' + filid + ' and tid in (select * from (select tag.tid from' +
+        ' tag left outer join category on tag.cid=category.cid where' +
+        ' tag.tname="' + tname +
+        '" and category.cname="' + cname + '") as p)',
+        function(err) {
+            if (err) {
+
+            } else {
+                callback();
+            }
+        });
 }
