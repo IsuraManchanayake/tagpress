@@ -44,7 +44,7 @@
             <div class="navbar-header">
                 <form class="navbar-form navbar-left" role="search">
                     <span class="glyphicon glyphicon-tags fa-lg" aria-hidden="true">&nbsp</span>
-                    <button type="button" id="import-btn" class="btn btn-success">Import</button>
+                    <button type="button" id="btn-import" class="btn btn-success">Import</button>
                 </form>
             </div>
         </div>
@@ -55,7 +55,7 @@
         </div>
         <div class="col-xs-7" id="mid-section">
             <div class="row droppable" id="do-bar">
-                <form class="form-inline" style="float: left">
+                <form onsubmit="return false" class="form-inline" style="float: left">
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon"><i class="glyphicon glyphicon-search"></i></div>

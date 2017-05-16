@@ -3,6 +3,7 @@ import './helpers/external_links.js';
 
 import { remote } from 'electron';
 import path from 'path'
+import fs from 'fs'
 import jetpack from 'fs-jetpack';
 import env from './env';
 import interact from 'interact.js'
@@ -28,6 +29,8 @@ import * as hf from './tagpress/view/js/htmlfactory'
 
 // var lista = listAllFiles(new Folder('src/tagpress/test/example/'))
 
+const { dialog } = require('electron').remote
+
 const app = remote.app;
 const appDir = jetpack.cwd(app.getAppPath());
 
@@ -41,24 +44,39 @@ const osMap = {
 
 var currentFolder;
 
+var allFolder = { path: "", name: ".." };
+var div = document.createElement('div');
+div.innerHTML = hf.getFileNavigationFolderHTML(allFolder);
+div.addEventListener('click', function() {
+    currentFolder = null;
+    // showAllFiles();
+    document.querySelector('#file-preview').setAttribute('data-current-folder', '');
+    document.querySelector('#file-preview').innerHTML = '';
+});
+document.querySelector("#file-nav").appendChild(div);
+
 filequery.listAllIndexedFolders(function(err, rows) {
     if (err) {
         console.error(err);
     } else {
         rows.forEach(function(row) {
             var folder = new Folder(row.fpath);
-            folder.fid = row.folid;
+            folder.folid = row.folid;
             var div = document.createElement('div');
             div.innerHTML = hf.getFileNavigationFolderHTML(folder);
             div.addEventListener('click', function() {
                 currentFolder = folder;
                 showFiles(folder);
-                document.querySelector('#file-preview').setAttribute('data-current-folder', folder.fid);
+                document.querySelector('#file-preview').setAttribute('data-current-folder', folder.folid);
             });
             document.querySelector("#file-nav").appendChild(div);
         });
     }
 });
+
+var showAllFiles = function() {
+
+}
 
 // document.querySelector('#file-preview').innerHTML = '<select class="selectpicker">\
 //   <option>Mustard</option>\
@@ -78,8 +96,8 @@ var selectedFiles = [];
 var showFiles = function(folder) {
     // console.log(folder);
     var ul = document.createElement('ul');
-    filequery.getAllTagsInTheFolder(folder.fid, function(tagMap) {
-        filequery.getIndexedFilesInsideFolder(folder.fid, function(err, rows) {
+    filequery.getAllTagsInTheFolder(folder.folid, function(tagMap) {
+        filequery.getIndexedFilesInsideFolder(folder.folid, function(err, rows) {
             if (err) {
                 console.error(err);
             } else {
@@ -257,6 +275,49 @@ document.querySelector('#btn-group-files').addEventListener('click', function() 
     // hf.showGroupFiles();
 });
 
+var importFolder = function(folpath, callback) {
+    filequery.importFolder(folpath, function(folid) {
+        // console.log('0' + folid);
+        fs.readdir(folpath, function(err, files) {
+            // console.log('1' + folid);
+            if (err) {
+                throw err;
+            }
+            files.map(function(file) {
+                // console.log('2' + folid);
+                return path.join(folpath, file);
+            }).filter(function(file) {
+                // console.log('3' + folid);
+                return fs.statSync(file).isFile();
+            }).forEach(function(file) {
+                // console.log('4' + folid);
+                filequery.importFile(folid, path.basename(file), function(folid) {});
+                // console.log("%s (%s)", file, path.extname(file));
+                // callback(folid, )
+
+
+            });
+            var folder = new Folder(folpath);
+            folder.folid = folid;
+            currentFolder = folder;
+            callback(folder)
+        });
+    });
+}
+
+document.querySelector('#btn-import').addEventListener('click', function() {
+    dialog.showOpenDialog({
+        title: 'choose a file to import a folder',
+        defaultPath: '/home/',
+        properties: ['openFile', 'multiSelections'],
+    }, function(filePaths) {
+        var folpath = path.dirname(filePaths[0]);
+        importFolder(folpath, function(folder) {
+            hf.showNewFolder(folder, showFiles);
+        });
+    });
+});
+
 var onSearch = function(callback) {
     var keywords = document.querySelector('#input-search').value;
     var folderid = document.querySelector('#file-preview').getAttribute('data-current-folder');
@@ -272,7 +333,7 @@ var onSearch = function(callback) {
     }
 }
 
-document.querySelector('#btn-search').addEventListener('click', function() {
+var onSearchBtnClicked = function() {
     onSearch(function(files) {
         document.querySelector("#file-preview").innerHTML = '';
         var ol = document.createElement('ol');
@@ -316,4 +377,14 @@ document.querySelector('#btn-search').addEventListener('click', function() {
             document.querySelector('#file-preview').innerHTML = '<div id="no-results"><h2>No results for "' + document.querySelector('#input-search').value + '"</h2></p>'
         }
     });
+}
+
+document.querySelector('#btn-search').addEventListener('click', function() {
+    onSearchBtnClicked();
 });
+
+document.querySelector("#input-search").addEventListener('keydown', function(e) {
+    if (e.keyCode == 13) { // Enter key
+        onSearchBtnClicked();
+    }
+})

@@ -60,7 +60,7 @@ export class File {
      */
     getThumbnail() {
         try {
-            var imgExtensions = ["jpg", "jpeg", "png", "gif"]
+            var imgExtensions = ["jpg", "JPG", "jpeg", "png", "gif"]
             var fontExtensions = ["ttf", "ttc", "otf"]
             var fileSplit = this.name.split(".")
             if (fileSplit.length > 0) {

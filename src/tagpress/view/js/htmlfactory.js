@@ -501,3 +501,14 @@ export const makeInventoryTagsDraggable = (onTag, onRemoveTagFromAFile) => {
         }
     });
 }
+
+export const showNewFolder = (folder, showFiles) => {
+    var div = document.createElement('div');
+    div.innerHTML = getFileNavigationFolderHTML(folder);
+    div.addEventListener('click', function() {
+        // currentFolder = folder;
+        showFiles(folder);
+        document.querySelector('#file-preview').setAttribute('data-current-folder', folder.folid);
+    });
+    document.querySelector("#file-nav").appendChild(div);
+}

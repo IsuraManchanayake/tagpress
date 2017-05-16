@@ -180,3 +180,29 @@ export const removeTagFromFile = (filid, tname, cname, callback, db) => {
             }
         });
 }
+
+export const importFolder = (fpath, callback) => {
+    var dbconnect = new DBConnect();
+    dbconnect.con.query('insert into indexedfolders(fpath) values ("' + fpath + '/")', function(err) {
+        dbconnect.con.query('select max(folid) as folid from indexedfolders', function(err, rows) {
+            if (err) {} {
+                dbconnect.con.end();
+                console.log(rows[0]);
+                console.log(rows[0].folid);
+                callback(rows[0].folid);
+            }
+        });
+    });
+}
+
+export const importFile = (folid, filename, callback) => {
+    var dbconnect = new DBConnect();
+    console.log(folid + ' ' + filename);
+    console.log('insert into indexedfiles(folid, filename) values (' + folid + ', "' + filename + '")');
+    dbconnect.con.query('insert into indexedfiles(folid, filename) values (' + folid + ', "' + filename + '")', function(err) {
+        dbconnect.con.end();
+        if (err) {} else {
+            callback();
+        }
+    })
+}

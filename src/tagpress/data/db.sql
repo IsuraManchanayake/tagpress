@@ -21,13 +21,13 @@ ALTER TABLE `tag` ADD UNIQUE (cid, tname);
 
 CREATE TABLE `indexedfolders` (
     folid INT NOT NULL AUTO_INCREMENT,
-    fpath VARCHAR(200) NOT NULL,
+    fpath VARCHAR(500) NOT NULL,
     PRIMARY KEY(folid)
 );
 
 CREATE TABLE `indexedfiles` (
   `folid` INT(11) NOT NULL,
-  `filename` varchar(50) NOT NULL,
+  `filename` varchar(100) NOT NULL,
   `filid` INT(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY(filid),
   FOREIGN KEY(folid) REFERENCES indexedfolders(folid) ON DELETE CASCADE ON UPDATE CASCADE
