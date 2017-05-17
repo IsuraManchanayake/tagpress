@@ -22,7 +22,7 @@ export const getNewFontFaceHTML = (fontFile) => {
 
 export const getFontThumbnailPreview = (fontFile) => {
     var fontFaceName = fontFile.name.substr(0, fontFile.name.lastIndexOf('.')) || fontFile.name;
-    return '<div class="gallery droppable" data-filid="' + fontFile.fid + '"><p style="font-family: ' + fontFaceName + '; font-size: 30px; ' +
+    return '<div class="gallery droppable" data-filid="' + fontFile.fid + '" data-filepath="' + fontFile.path + '"><p style="font-family: ' + fontFaceName + '; font-size: 30px; ' +
         'text-align: center; padding: 15px;">' +
         global.defaultFontPreviewLine + '</p><div class="desc"><p title="open file" class="file-name open-file">' +
         fontFile.name +
@@ -31,7 +31,8 @@ export const getFontThumbnailPreview = (fontFile) => {
 }
 
 export const getImageThumbnailPreview = (file) => {
-    return '<div class="gallery droppable" data-filid="' + file.fid + '"><img src="' +
+    // console.log(file);
+    return '<div class="gallery droppable" data-filid="' + file.fid + '" data-filepath="' + file.path + '"><img src="' +
         'file://' + path.resolve(file.thumbnail) +
         '"><div class="desc"><p title="open file" class="file-name open-file">' +
         file.name +

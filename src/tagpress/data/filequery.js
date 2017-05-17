@@ -197,8 +197,8 @@ export const importFolder = (fpath, callback) => {
 
 export const importFile = (folid, filename, callback) => {
     var dbconnect = new DBConnect();
-    console.log(folid + ' ' + filename);
-    console.log('insert into indexedfiles(folid, filename) values (' + folid + ', "' + filename + '")');
+    // console.log(folid + ' ' + filename);
+    // console.log('insert into indexedfiles(folid, filename) values (' + folid + ', "' + filename + '")');
     dbconnect.con.query('insert into indexedfiles(folid, filename) values (' + folid + ', "' + filename + '")', function(err) {
         dbconnect.con.end();
         if (err) {} else {

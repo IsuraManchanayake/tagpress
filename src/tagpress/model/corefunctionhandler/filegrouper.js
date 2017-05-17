@@ -15,6 +15,9 @@ export class FileGrouper {
         this.files = files;
         this.tags = tags;
         this.target = target;
+        console.log(files);
+        console.log(tags);
+        console.log(target);
         // var pathMap = [];
         // files.forEach(function(file) {
         //     pathMap[file.path] = [];
@@ -43,7 +46,8 @@ export class FileGrouper {
             mkdirp(self.target + '[' + tag.category.name + '].[' + tag.name + ']');
             self.files.forEach(function(file) {
                 file.tags.forEach(function(filetag) {
-                    if (filetag.tid == tag.tid) {
+                    // if (filetag.tid == tag.tid) {
+                    if (filetag.name == tag.name && filetag.category.name == tag.category.name) {
                         if (pathMap[file.path].indexOf(self.target + '[' + tag.category.name + '].[' + tag.name + ']/' + file.name) == -1) {
                             pathMap[file.path].push(self.target + '[' + tag.category.name + '].[' + tag.name + ']/' + file.name);
                         }
@@ -51,6 +55,7 @@ export class FileGrouper {
                 })
             });
         });
+        console.log("pathMap " + pathMap);
         for (var source in pathMap) {
             if (pathMap.hasOwnProperty(source)) {
                 pathMap[source].forEach(function(target) {

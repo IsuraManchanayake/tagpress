@@ -67,6 +67,7 @@
                 <button id="btn-group-files" type="button" class="btn btn-default" style="float: right" data-toggle="modal" data-target="#myModal">Group files</button>
             </div>
             <div class="row">
+
                 <!-- group files start -->
                 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                     <div class="modal-dialog" role="document">
@@ -86,66 +87,30 @@
                                 </div>
                                 <div class="form-inline form-group">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" width="" id="file-group-folder-path" placeholder="Browse">
+                                        <input id="browse-path" type="text" class="form-control" width="" id="file-group-folder-path" placeholder="Browse">
                                     </div>
                                     <div class="form-group">
-                                        <button type="button" class="btn btn-default">Browse</button>
+                                        <button id="browse-target" type="button" class="btn btn-default">Browse</button>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select category<span class="caret"></span></button>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="#" class="dropdown-links" style="background-color: darkcyan">music</a></li>
-                                            <li><a href="#" class="dropdown-links" style="background-color: darkmagenta">font</a></li>
-                                            <li><a href="#" class="dropdown-links" style="background-color: gold">rating</a></li>
-                                            <li><a href="#" class="dropdown-links" style="background-color: indianred">date</a></li>
-                                            <li><a href="#" class="dropdown-links" style="background-color: orangered">current-state</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select tag<span class="caret"></span></button>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="#" class="dropdown-links" style="background-color: gold">5-Stars</a></li>
-                                            <li><a href="#" class="dropdown-links" style="background-color: gold">4-Stars</a></li>
-                                            <li><a href="#" class="dropdown-links" style="background-color: gold">3-Stars</a></li>
-                                            <li><a href="#" class="dropdown-links" style="background-color: gold">2-Stars</a></li>
-                                            <li><a href="#" class="dropdown-links" style="background-color: gold">1-Star</a></li>
-                                        </ul>
-                                    </div>
+
+                                <div class="btn-group input-group form-group" data-toggle="buttons" id="choose-tag">
+                                    <!-- JavaScript -->
                                 </div>
-                                <div class="form-group">
-                                    <div class="btn-group">
-                                        <button type="button" id="addnew-tag-group" class="btn btn-default"><i id="addnew-tag-icon" class="glyphicon glyphicon-plus"></i></button>
-                                    </div>
-                                </div>
-                                <!--<ul class="nav nav-tabs">
-                                    <li role="presentation" class="active"><a href="#menu1">Home</a></li>
-                                    <li role="presentation"><a href="#menu2">Profile</a></li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div id="menu1" class="tab-pane fade">
-                                        <h3>Menu 1</h3>
-                                        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                                    </div>
-                                    <div id="menu2" class="tab-pane fade">
-                                        <h3>Menu 2</h3>
-                                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
-                                    </div>
-                                </div>-->
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Group</button>
+                                <button id="btn-group-now" type="button" class="btn btn-primary">Group</button>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- group files end -->
 
                 <div id="file-preview">
-                </div>
 
-                <!-- group files end -->
+                </div>
 
             </div>
         </div>

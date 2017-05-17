@@ -8,6 +8,7 @@ import jetpack from 'fs-jetpack';
 import env from './env';
 import interact from 'interact.js'
 import { ProvidePlugin } from 'webpack'
+import asyncLoop from 'node-async-loop'
 
 var a = new ProvidePlugin({
     $: "jquery",
@@ -44,6 +45,7 @@ const osMap = {
 };
 
 var currentFolder;
+var targetFolderPath = '/home/isura';
 
 var allFolder = { path: "", name: ".." };
 var div = document.createElement('div');
@@ -256,7 +258,6 @@ filequery.getAllTags(function(tagrows) {
 
 document.querySelector('#tag-inventory').style.overflowY = "scroll";
 
-
 var onTag = function(filid, cname, tname, successCallback, errCallback, doAtEnd) {
     if (selectedFiles.length == 0) {
         filequery.tagFile(filid, cname, tname, successCallback, errCallback);
@@ -273,8 +274,115 @@ var onTag = function(filid, cname, tname, successCallback, errCallback, doAtEnd)
 hf.makeInventoryTagsDraggable(onTag, onRemoveTagFromAFile);
 
 document.querySelector('#btn-group-files').addEventListener('click', function() {
-    // hf.showGroupFiles();
+    document.querySelector('#browse-path').value = targetFolderPath;
+    var tagcheck = document.querySelector('#choose-tag');
+    tagcheck.innerHTML = '';
+    filequery.getAllTags(function(rows) {
+        rows.forEach(function(row) {
+            var tag = new Tag(row.tname, new Category(row.cname, row.color), row.tid);
+            var input = document.createElement('input');
+            // console.log(tag);
+            input.type = 'checkbox';
+            input.id = 'check-' + tag.tid;
+            input.className = 'option-tag-check'
+            input.setAttribute('data-tag-name', tag.name);
+            input.setAttribute('data-tag-tid', tag.tid);
+            input.setAttribute('data-tag-cname', tag.category.name);
+            input.setAttribute('data-tag-color', tag.category.color);
+            input.name = 'options';
+            var label = document.createElement('label');
+            label.addEventListener('click', function() {
+                if (!input.checked) {
+                    console.log('checked');
+                    label.classList.add('checked-tag');
+                } else {
+                    console.log('un-checked');
+                    label.classList.remove('checked-tag');
+                }
+            });
+            label.htmlFor = 'check-' + tag.tid;
+            label.className = 'btn btn-default btn-tag-check';
+            label.innerHTML += tag.name;
+            label.appendChild(input);
+            label.style.backgroundColor = tag.category.color;
+            tagcheck.appendChild(label);
+        });
+    });
 });
+
+document.querySelector('#browse-target').addEventListener('click', function() {
+    dialog.showOpenDialog({
+        title: 'choose a folder to group files',
+        defaultPath: '/home/',
+        properties: ['openDirectory'],
+    }, function(folderPath) {
+        targetFolderPath = folderPath;
+        document.querySelector('#browse-path').value = targetFolderPath;
+    });
+});
+
+var listCurrentFiles = function() {
+    // if(b)
+    var files = [];
+    document.querySelectorAll('.gallery').forEach(function(thumbnail) {
+        var filepath = thumbnail.getAttribute('data-filepath');
+        var filid = thumbnail.getAttribute('data-filid');
+        var tags = [];
+        thumbnail.querySelectorAll('kbd').forEach(function(kbd) {
+            var tag = new Tag(kbd.getAttribute('data-tname'), new Category(kbd.getAttribute('data-cname')));
+            tags.push(tag);
+        });
+        var file = new File(thumbnail.getAttribute('data-filepath'), tags, thumbnail.getAttribute('data-filid'));
+        // console.log(file);
+    });
+    return files;
+}
+
+document.querySelector('#btn-group-now').addEventListener('click', function() {
+    var target = document.querySelector('#browse-path').value;
+    var tags = [];
+    var files = [];
+    if (target) {
+        asyncLoop([...document.querySelectorAll('.gallery')], function(thumbnail, next) {
+            if (thumbnail) {
+                var filepath = thumbnail.getAttribute('data-filepath');
+                var filid = thumbnail.getAttribute('data-filid');
+                var filetags = [];
+                if (thumbnail.querySelectorAll('kbd')) {
+                    asyncLoop([...thumbnail.querySelectorAll('kbd')], function(kbd, next2) {
+                        if (kbd) {
+                            console.log(kbd);
+                            var tag = new Tag(kbd.getAttribute('data-tname'), new Category(kbd.getAttribute('data-cname')));
+                            filetags.push(tag);
+                        }
+                        next2();
+                    });
+                }
+                var file = new File(thumbnail.getAttribute('data-filepath'), filetags, thumbnail.getAttribute('data-filid'));
+                files.push(file);
+            }
+            next();
+        }, function() {
+            asyncLoop([...document.querySelectorAll('.option-tag-check')], function(input, next3) {
+                if (input) {
+                    if (input.checked) {
+                        tags.push(new Tag(input.getAttribute('data-tag-name'), new Category(input.getAttribute('data-tag-cname'))));
+                    }
+                }
+                next3();
+            }, function() {
+                var fg = new FileGrouper(files, tags, target + '/');
+                fg.copyFiles();
+                console.log(files);
+                console.log(tags);
+            });
+        });
+
+    } else {
+        alert('Fill required fields');
+    }
+});
+
 
 var importFolder = function(folpath, callback) {
     filequery.importFolder(folpath, function(folid) {
