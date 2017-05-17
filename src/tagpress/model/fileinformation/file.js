@@ -1,4 +1,5 @@
 import { global } from '../../global/global'
+import path from 'path'
 
 export class File {
     /**

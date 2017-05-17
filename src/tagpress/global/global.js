@@ -1,5 +1,6 @@
 export const global = {
-    defaultFileThumb: "src/tagpress/view/img/default-file-thumb.png",
+    // defaultFileThumb: "src/tagpress/view/img/default-file-thumb.png",
+    defaultFileThumb: "/media/isura/2030CA7330CA5008/project/tagpress2/app/img/default-file-thumb.png",
     defaultFolderThumb: "src/tagpress/view/img/default-folder-thumb.png",
     tagpressFileName: ".tagpress",
     tagpressspaces: 1,
@@ -21,5 +22,6 @@ export const global = {
             'translate(' + x + 'px, ' + y + 'px)';
         target.setAttribute('data-x', x);
         target.setAttribute('data-y', y);
-    }
+    },
+    sqlite3dbpath: './db/tagpress.db'
 }

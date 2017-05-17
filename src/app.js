@@ -6,6 +6,7 @@ import path from 'path'
 import fs from 'fs'
 import jetpack from 'fs-jetpack';
 import env from './env';
+// import path from 'path';
 import interact from 'interact.js'
 import { ProvidePlugin } from 'webpack'
 import asyncLoop from 'node-async-loop'
@@ -17,14 +18,13 @@ var a = new ProvidePlugin({
 });
 import 'jquery-ui-bundle'
 
-import { listAllFiles } from './tagpress/model/tagpressfilehandler/validator'
+// import { listAllFiles } from './tagpress/model/tagpressfilehandler/validator'
 import { Folder } from './tagpress/model/fileinformation/folder'
 import { File } from './tagpress/model/fileinformation/file'
 import { Tag } from './tagpress/model/fileinformation/tag'
 import { Category } from './tagpress/model/fileinformation/category'
 import { Searcher } from './tagpress/model/search/searcher'
 import { FileGrouper } from './tagpress/model/corefunctionhandler/filegrouper'
-import { DBConnect } from './tagpress/data/dbconnect'
 import { global } from './tagpress/global/global'
 import * as filequery from './tagpress/data/filequery'
 import * as hf from './tagpress/view/js/htmlfactory'
@@ -32,6 +32,8 @@ import * as hf from './tagpress/view/js/htmlfactory'
 // var lista = listAllFiles(new Folder('src/tagpress/test/example/'))
 
 const { dialog } = require('electron').remote
+
+// BrowserWindow.getFocusedWindow().toggleDevTools();
 
 const app = remote.app;
 const appDir = jetpack.cwd(app.getAppPath());
@@ -105,7 +107,7 @@ var showFiles = function(folder) {
                 console.error(err);
             } else {
                 document.querySelector("#file-preview").innerHTML = '';
-                var dbconnect = new DBConnect();
+                // var dbconnect = new DBConnect();
                 var ol = document.createElement('ol');
                 ol.id = 'selectable';
                 rows.forEach(function(row) {
@@ -263,11 +265,13 @@ var onTag = function(filid, cname, tname, successCallback, errCallback, doAtEnd)
         filequery.tagFile(filid, cname, tname, successCallback, errCallback);
         doAtEnd();
     } else {
-        selectedFiles.forEach(function(_filid) {
+        asyncLoop(selectedFiles, function(_filid, next) {
             filequery.tagFile(_filid, cname, tname, successCallback, errCallback);
+            next();
+        }, function() {
+            selectedFiles = [];
+            doAtEnd();
         });
-        selectedFiles = [];
-        doAtEnd();
     }
 }
 
@@ -373,8 +377,8 @@ document.querySelector('#btn-group-now').addEventListener('click', function() {
             }, function() {
                 var fg = new FileGrouper(files, tags, target + '/');
                 fg.copyFiles();
-                console.log(files);
-                console.log(tags);
+                // console.log(files);
+                // console.log(tags);
             });
         });
 
@@ -498,6 +502,22 @@ document.querySelector("#input-search").addEventListener('keydown', function(e) 
     }
 });
 
+
+// var sqlite3 = require('sqlite3').verbose();
+// console.log(__dirname + "sdfsd");
+// var db = new sqlite3.Database(path.resolve(__dirname, '../db/test.db'));
+// var check;
+// db.serialize(function() {
+//     db.each('select filetag.filid, filetag.tid, tag.tname, category.cname, category.color ' +
+//         'from filetag, tag, category where filetag.filid=' + 4002 + ' and filetag.tid=tag.tid' +
+//         ' and category.cid=tag.cid',
+//         function(err, row) {
+//             console.log('sqlite3 ' + row.filid + ' ' + row.tid + ' ' + row.tname + ' ' + row.cname + ' ' + row.color);
+//             // console.log(row.id + ": " + row.info);
+//         });
+// });
+
+// db.close();
 
 // var file1 = new File('/media/isura/2030CA7330CA5008/shiki/SHIKI01S_xbox.mp4', [
 //     new Tag('abc', new Category('def', 'ghi'), "1"),

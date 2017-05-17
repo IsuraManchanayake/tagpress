@@ -1,6 +1,7 @@
 import { global } from '../../global/global'
 import fs from 'fs'
 import mkdirp from 'mkdirp'
+import exec from 'exec'
 
 export class FileGrouper {
 
@@ -42,20 +43,23 @@ export class FileGrouper {
             pathMap[file.path] = [];
         });
         var self = this;
+        var count = 0;
         this.tags.forEach(function(tag) {
-            mkdirp(self.target + '[' + tag.category.name + '].[' + tag.name + ']');
+            mkdirp.sync(self.target + '[' + tag.category.name + '][' + tag.name + ']');
             self.files.forEach(function(file) {
                 file.tags.forEach(function(filetag) {
                     // if (filetag.tid == tag.tid) {
                     if (filetag.name == tag.name && filetag.category.name == tag.category.name) {
-                        if (pathMap[file.path].indexOf(self.target + '[' + tag.category.name + '].[' + tag.name + ']/' + file.name) == -1) {
-                            pathMap[file.path].push(self.target + '[' + tag.category.name + '].[' + tag.name + ']/' + file.name);
+                        if (pathMap[file.path].indexOf(self.target + '[' + tag.category.name + '][' + tag.name + ']/' + file.name) == -1) {
+                            pathMap[file.path].push(self.target + '[' + tag.category.name + '][' + tag.name + ']/' + file.name);
+                            count++;
                         }
                     }
                 })
             });
         });
         console.log("pathMap " + pathMap);
+        var i = 0;
         for (var source in pathMap) {
             if (pathMap.hasOwnProperty(source)) {
                 pathMap[source].forEach(function(target) {
@@ -65,6 +69,13 @@ export class FileGrouper {
                             console.log(err);
                         }
                         console.log(source + '**[TO]**' + target + '**[DONE]');
+                        i++;
+                        if (i == count) {
+                            alert('File grouping done');
+                            exec('nautilus ' + self.target, function(err, out, code) {
+
+                            });
+                        }
                     });
                 });
             }

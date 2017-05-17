@@ -32,7 +32,9 @@
   "dependencies": {
     "bootstrap-select": "^1.12.2",
     "collections": "^5.0.6",
+    "exec": "^0.2.1",
     "fs-jetpack": "^0.12.0",
+    "interact.js": "^1.2.8",
     "jquery": "^3.2.1",
     "jquery-ui": "^1.12.1",
     "jquery-ui-bundle": "^1.12.1",
@@ -40,7 +42,9 @@
     "jsonfile": "^2.4.0",
     "mkdirp": "^0.5.1",
     "multimap": "^1.0.2",
+    "mysql": "^2.13.0",
     "node-async-loop": "^1.2.2",
+    "sqlite3": "^3.1.8",
     "webpack": "^2.5.1"
   },
   "devDependencies": {
