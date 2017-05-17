@@ -22,6 +22,7 @@ import { File } from './tagpress/model/fileinformation/file'
 import { Tag } from './tagpress/model/fileinformation/tag'
 import { Category } from './tagpress/model/fileinformation/category'
 import { Searcher } from './tagpress/model/search/searcher'
+import { FileGrouper } from './tagpress/model/corefunctionhandler/filegrouper'
 import { DBConnect } from './tagpress/data/dbconnect'
 import { global } from './tagpress/global/global'
 import * as filequery from './tagpress/data/filequery'
@@ -297,7 +298,7 @@ var importFolder = function(folpath, callback) {
 
 
             });
-            var folder = new Folder(folpath);
+            var folder = new Folder(folpath + "/");
             folder.folid = folid;
             currentFolder = folder;
             callback(folder)
@@ -387,4 +388,23 @@ document.querySelector("#input-search").addEventListener('keydown', function(e) 
     if (e.keyCode == 13) { // Enter key
         onSearchBtnClicked();
     }
-})
+});
+
+
+// var file1 = new File('/media/isura/2030CA7330CA5008/shiki/SHIKI01S_xbox.mp4', [
+//     new Tag('abc', new Category('def', 'ghi'), "1"),
+//     new Tag('jkl', new Category('mno', 'pqr'), "2")
+// ]);
+// var file2 = new File('/media/isura/2030CA7330CA5008/shiki/SHIKI02S_xbox.mp4', [
+//     new Tag('abc', new Category('def', 'ghi'), "1"),
+//     new Tag('321', new Category('mno', 'pqr'), "3")
+// ]);
+// var file3 = new File('/media/isura/2030CA7330CA5008/shiki/SHIKI01S_xbox.mp4', [
+//     new Tag('abc', new Category('def', 'ghi'), "1"),
+//     new Tag('jkl', new Category('mno', 'pqr'), "2"),
+//     new Tag('321', new Category('mno', 'pqr'), "3")
+// ]);
+// var files = [file1, file2, file3];
+// var tags = [new Tag('abc', new Category('def', 'ghi'), "1"), new Tag('jkl', new Category('mno', 'pqr'), "2")];
+// var fg = new FileGrouper(files, tags, '/media/isura/2030CA7330CA5008/shiki/da/');
+// fg.copyFiles();

@@ -24,7 +24,7 @@ export const getFontThumbnailPreview = (fontFile) => {
     var fontFaceName = fontFile.name.substr(0, fontFile.name.lastIndexOf('.')) || fontFile.name;
     return '<div class="gallery droppable" data-filid="' + fontFile.fid + '"><p style="font-family: ' + fontFaceName + '; font-size: 30px; ' +
         'text-align: center; padding: 15px;">' +
-        global.defaultFontPreviewLine + '</p><div class="desc"><p title="open file" class="file-name">' +
+        global.defaultFontPreviewLine + '</p><div class="desc"><p title="open file" class="file-name open-file">' +
         fontFile.name +
         '</p><div id="file-id-' + fontFile.fid + '" data-filid="' + fontFile.fid + '" class="tags"></div></div></div>';
     // '</p><p class="tags" style="margin-left: 10px; margin-right: 10px;"><kbd>serif</kbd><kbd>sans-serif</kbd><kbd>mono</kbd></p></div></div>';
@@ -33,7 +33,7 @@ export const getFontThumbnailPreview = (fontFile) => {
 export const getImageThumbnailPreview = (file) => {
     return '<div class="gallery droppable" data-filid="' + file.fid + '"><img src="' +
         'file://' + path.resolve(file.thumbnail) +
-        '"><div class="desc"><p title="open file" class="file-name">' +
+        '"><div class="desc"><p title="open file" class="file-name open-file">' +
         file.name +
         '</p><div id="file-id-' + file.fid + '" data-filid="' + file.fid + '" class="tags"></div></div></div>';
 }
@@ -484,7 +484,6 @@ export const makeInventoryTagsDraggable = (onTag, onRemoveTagFromAFile) => {
                         droptagkbd.remove();
                     });
                     droptagkbd.appendChild(icon);
-
                     dropto.appendChild(droptagkbd);
                 },
                 function() { // error callback

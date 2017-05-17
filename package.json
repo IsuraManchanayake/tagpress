@@ -38,6 +38,7 @@
     "jquery-ui-bundle": "^1.12.1",
     "jquery-ui-dist": "^1.12.1",
     "jsonfile": "^2.4.0",
+    "mkdirp": "^0.5.1",
     "multimap": "^1.0.2",
     "node-async-loop": "^1.2.2",
     "webpack": "^2.5.1"
