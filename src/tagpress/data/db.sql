@@ -231,7 +231,7 @@ INSERT INTO `indexedfiles` (`filid`, `filename`, `folid`) VALUES
 INSERT INTO `category` (`cid`, `cname`, `color`) VALUES
     (1001, 'default', 'green'),
     (1002, 'music', 'darkcyan'),
-    (1003, 'font', 'darkmagenta'),
+    (1003, 'font', 'darkmagenta'), 
     (1004, 'rating', 'gold'),
     (1005, 'date', 'indianred'),
     (1006, 'current-state', 'orangered'),

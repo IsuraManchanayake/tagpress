@@ -2,8 +2,11 @@ import { global } from '../../global/global'
 import path from 'path'
 import interact from 'interact.js'
 import 'jquery-ui-bundle';
-// import $ from 'jquery'
 
+/**
+ * return a folder html to #file-nav
+ * @param {Folder} folder 
+ */
 export const getFileNavigationFolderHTML = (folder) => {
     return '<button type="button" class="folder"><p class="folder-name">' +
         folder.name +
@@ -12,6 +15,10 @@ export const getFileNavigationFolderHTML = (folder) => {
         '</p></button>';
 }
 
+/**
+ * return font face to <head></head>
+ * @param {File} fontFile 
+ */
 export const getNewFontFaceHTML = (fontFile) => {
     var fontFaceName = fontFile.name.substr(0, fontFile.name.lastIndexOf('.')) || fontFile.name;
     return "@font-face {\
@@ -20,6 +27,10 @@ export const getNewFontFaceHTML = (fontFile) => {
             }";
 }
 
+/**
+ * return file thumbnail of a font file
+ * @param {File} fontFile 
+ */
 export const getFontThumbnailPreview = (fontFile) => {
     var fontFaceName = fontFile.name.substr(0, fontFile.name.lastIndexOf('.')) || fontFile.name;
     return '<div class="gallery droppable" data-filid="' + fontFile.fid + '" data-filepath="' + fontFile.path + '"><p style="font-family: ' + fontFaceName + '; font-size: 30px; ' +
@@ -30,6 +41,10 @@ export const getFontThumbnailPreview = (fontFile) => {
     // '</p><p class="tags" style="margin-left: 10px; margin-right: 10px;"><kbd>serif</kbd><kbd>sans-serif</kbd><kbd>mono</kbd></p></div></div>';
 }
 
+/**
+ * return image thumbnail of a file
+ * @param {File} file 
+ */
 export const getImageThumbnailPreview = (file) => {
     // console.log(file);
     return '<div class="gallery droppable" data-filid="' + file.fid + '" data-filepath="' + file.path + '"><img src="' +
@@ -39,6 +54,11 @@ export const getImageThumbnailPreview = (file) => {
         '</p><div id="file-id-' + file.fid + '" data-filid="' + file.fid + '" class="tags"></div></div></div>';
 }
 
+/**
+ * show tags in the already created file thumbnails
+ * @param {File} files 
+ * @param {Function} onRemoveTagFromAFile 
+ */
 export const showTags = (files, onRemoveTagFromAFile) => {
     // console.log(files);
     if (!!Object.keys(files).length) {
@@ -88,6 +108,15 @@ export const showTags = (files, onRemoveTagFromAFile) => {
     }
 }
 
+/**
+ * show tag inventory in the already created #tag-inventory
+ * @param {Tag[]} tags 
+ * @param {Category[]} emptyCategories 
+ * @param {Function} onAddNewTag 
+ * @param {Function} onRemoveTag 
+ * @param {Function} onEditTag 
+ * @param {Function} onAddNewCategory 
+ */
 export const showTagInventory = (tags, emptyCategories, onAddNewTag, onRemoveTag, onEditTag, onAddNewCategory) => {
     // console.log(tags);
     if (!!Object.keys(tags).length) {
@@ -189,6 +218,10 @@ export const showTagInventory = (tags, emptyCategories, onAddNewTag, onRemoveTag
     document.querySelector('#tag-inventory').appendChild(button);
 }
 
+/**
+ * show category create div
+ * @param {Function} onCreateNewCategory 
+ */
 export const showInputNewCategory = (onCreateNewCategory) => {
     var categoryDiv = document.createElement('div');
     categoryDiv.className = 'create-category-div';
@@ -245,6 +278,12 @@ export const showInputNewCategory = (onCreateNewCategory) => {
     });
 }
 
+/**
+ * show newly created category
+ * @param {String} categoryName 
+ * @param {String} categoryColor 
+ * @param {Function} onAddNewTag 
+ */
 export const showNewCategory = (categoryName, categoryColor, onAddNewTag) => {
     // console.log('shit');
     var categoryDiv = document.createElement('div');
@@ -266,6 +305,10 @@ export const showNewCategory = (categoryName, categoryColor, onAddNewTag) => {
         });
 }
 
+/**
+ * show new tag input tag inside a given category
+ * @param {Category} category 
+ */
 export const showInputNewTag = (category) => {
     console.log(category);
     var plusIcon = document.querySelector('#add-newtag-kbd-' + category.name);
@@ -284,6 +327,11 @@ export const showInputNewTag = (category) => {
     return newTag;
 }
 
+/**
+ * show add new tag icon   
+ * @param {Category} category 
+ * @param {Function} onAddNewTag 
+ */
 export const showAddNewTagIcon = (category, onAddNewTag) => {
     var addnewTag = document.createElement('kbd');
     addnewTag.style.cssFloat = "left";
@@ -299,6 +347,14 @@ export const showAddNewTagIcon = (category, onAddNewTag) => {
     return addnewTag;
 }
 
+/**
+ * 
+ * @param {String} categoryName 
+ * @param {String} tagName 
+ * @param {String} categoryColor 
+ * @param {Function} onEditTag 
+ * @param {Function} onRemoveTag 
+ */
 export const showNewTag = (categoryName, tagName, categoryColor, onEditTag, onRemoveTag) => {
     var categoryDiv = document.querySelector('#category-div-' + categoryName);
     var tagkbd = document.createElement('kbd');
@@ -347,6 +403,11 @@ export const showNewTag = (categoryName, tagName, categoryColor, onEditTag, onRe
     categoryDiv.insertBefore(tagkbd, categoryDiv.childNodes[categoryDiv.childNodes.length - 2]);
 }
 
+/**
+ * make inventory tags draggable
+ * @param {Function} onTag 
+ * @param {Function} onRemoveTagFromAFile 
+ */
 export const makeInventoryTagsDraggable = (onTag, onRemoveTagFromAFile) => {
     var startPos = null;
     interact('.draggable').draggable({
@@ -502,6 +563,11 @@ export const makeInventoryTagsDraggable = (onTag, onRemoveTagFromAFile) => {
     });
 }
 
+/**
+ * show newly created folder
+ * @param {Folder} folder 
+ * @param {Function} showFiles 
+ */
 export const showNewFolder = (folder, showFiles) => {
     var div = document.createElement('div');
     div.innerHTML = getFileNavigationFolderHTML(folder);

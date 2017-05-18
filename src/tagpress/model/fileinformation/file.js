@@ -61,19 +61,23 @@ export class File {
      */
     getThumbnail() {
         try {
-            var imgExtensions = ["jpg", "JPG", "jpeg", "png", "gif"]
-            var fontExtensions = ["ttf", "ttc", "otf"]
-            var fileSplit = this.name.split(".")
+            var imgExtensions = ["jpg", "JPG", "jpeg", "png", "gif"];
+            var fontExtensions = ["ttf", "ttc", "otf"];
+            var audioExtensions = ["mp3"];
+            var fileSplit = this.name.split(".");
             if (fileSplit.length > 0) {
                 var ext = fileSplit[fileSplit.length - 1]
                 if (imgExtensions.indexOf(ext) >= 0) {
-                    return this.path
+                    return this.path;
+                }
+                if (audioExtensions.indexOf(ext) >= 0) {
+                    return global.defaultMP3Thumb;
                 }
                 this.isFont = (fontExtensions.indexOf(ext) >= 0);
             }
         } catch (err) {
-            return global.defaultFileThumb
+            return global.defaultFileThumb;
         }
-        return global.defaultFileThumb
+        return global.defaultFileThumb;
     }
 }

@@ -1,6 +1,7 @@
 export const global = {
     // defaultFileThumb: "src/tagpress/view/img/default-file-thumb.png",
     defaultFileThumb: "/media/isura/2030CA7330CA5008/project/tagpress2/app/img/default-file-thumb.png",
+    defaultMP3Thumb: "/media/isura/2030CA7330CA5008/project/tagpress2/app/img/default-mp3-thumb.png",
     defaultFolderThumb: "src/tagpress/view/img/default-folder-thumb.png",
     tagpressFileName: ".tagpress",
     tagpressspaces: 1,

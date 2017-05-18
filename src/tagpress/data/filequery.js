@@ -3,24 +3,43 @@ import { DBConnect } from './dbconnect'
 import mysql from 'mysql'
 import asyncLoop from 'node-async-loop'
 
-export const listAllIndexedFolders = (callback, db) => {
-    var dbconnect = db || new DBConnect();
+/**
+ * list all indexed folders from the database
+ * @param {Function} callback(err, rows)
+ *      err: {Error}
+ *      rows: {RawDataPacket[]}
+ */
+export const listAllIndexedFolders = (callback) => {
+    var dbconnect = new DBConnect();
     dbconnect.con.query('select * from indexedfolders', function(err, rows) {
-        callback(err, rows);
         dbconnect.con.end();
+        callback(err, rows);
     });
 }
 
-export const getIndexedFilesInsideFolder = (folderid, callback, db) => {
-    var dbconnect = db || new DBConnect();
+/**
+ * list all file names and ids inside a given folder from the database
+ * @param {Number} folderid 
+ * @param {Function} callback(err, rows)
+ *      err: {Error}
+ *      rows: {RawDataPacket[]}
+ */
+export const getIndexedFilesInsideFolder = (folderid, callback) => {
+    var dbconnect = new DBConnect();
     dbconnect.con.query('select * from indexedfiles where folid=' + folderid, function(err, rows) {
-        callback(err, rows);
         dbconnect.con.end();
+        callback(err, rows);
     });
 }
 
-export const getAllTagsInTheFolder = (folderid, callback, db) => {
-    var dbconnect = db || new DBConnect();
+/**
+ * list file information with tags in a folder
+ * @param {Number} folderid 
+ * @param {Function} callback(ar): 
+ *      ar {RawDataPacket[]}
+ */
+export const getAllTagsInTheFolder = (folderid, callback) => {
+    var dbconnect = new DBConnect();
     dbconnect.con.query('select * from indexedfiles where folid=' + folderid, function(err, rows) {
         if (err) {
             throw err;
@@ -50,8 +69,13 @@ export const getAllTagsInTheFolder = (folderid, callback, db) => {
     });
 }
 
-export const getAllTags = (callback, db) => {
-    var dbconnect = db || new DBConnect();
+/**
+ * list all current tags from the database 
+ * @param {Function} callback(rows)
+ *      rows {RawDataPacket[]}
+ */
+export const getAllTags = (callback) => {
+    var dbconnect = new DBConnect();
     dbconnect.con.query('select tid, tname, cname, color from tag left outer join category on tag.cid=' +
         'category.cid',
         function(err, rows) {
@@ -63,8 +87,13 @@ export const getAllTags = (callback, db) => {
         });
 }
 
-export const getEmptyCategories = (callback, db) => {
-    var dbconnect = db || new DBConnect();
+/**
+ * return empty categories(without tags) from the database 
+ * @param {Function} callback(rows) 
+ *      rows {RawDataPacket[]}
+ */
+export const getEmptyCategories = (callback) => {
+    var dbconnect = new DBConnect();
     dbconnect.con.query('select cname, color from (select count(tid) as cnt, category.cname as cname,' +
         ' category.color as color  from category left outer join tag  on tag.cid=category.cid group by category.cid)' +
         ' as p where cnt=0',
@@ -77,8 +106,15 @@ export const getEmptyCategories = (callback, db) => {
         });
 }
 
-export const insertNewTag = (categoryName, tagName, callback, db) => {
-    var dbconnect = db || new DBConnect();
+/**
+ * insert new tag to a category
+ * @param {String} categoryName 
+ * @param {String} tagName 
+ * @param {Function} callback(err) 
+ *      err {Error}: possible errors for duplicates
+ */
+export const insertNewTag = (categoryName, tagName, callback) => {
+    var dbconnect = new DBConnect();
     // console.log('select cid from category where cname="' + categoryName + '"');
     dbconnect.con.query('select cid from category where cname="' + categoryName + '"', function(err, rows) {
         dbconnect.con.end();
@@ -86,7 +122,7 @@ export const insertNewTag = (categoryName, tagName, callback, db) => {
             callback(err);
         }
         var cid = rows[0].cid;
-        var idbconnect = db || new DBConnect();
+        var idbconnect = new DBConnect();
         idbconnect.con.query('insert into tag(cid, tname) values (' + cid + ', "' + tagName + '")', function(ierr) {
             idbconnect.con.end();
             if (ierr) {
@@ -98,8 +134,15 @@ export const insertNewTag = (categoryName, tagName, callback, db) => {
     });
 }
 
-export const insertCategory = (categoryName, categoryColor, callback, db) => {
-    var dbconnect = db || new DBConnect();
+/**
+ * insert new category with name and color
+ * @param {String} categoryName 
+ * @param {String} categoryColor 
+ * @param {Function} callback(err)
+ *      err {Error}: error for possible duplicates
+ */
+export const insertCategory = (categoryName, categoryColor, callback) => {
+    var dbconnect = new DBConnect();
     dbconnect.con.query('insert into category(cname, color) values ("' + categoryName + '", "' + categoryColor + '")', function(err) {
         dbconnect.con.end();
         if (err) {
@@ -110,8 +153,15 @@ export const insertCategory = (categoryName, categoryColor, callback, db) => {
     });
 }
 
-export const removeTag = (categoryName, tagName, callback, db) => {
-    var dbconnect = db || new DBConnect();
+/**
+ * remove a tag from the database
+ * @param {String} categoryName 
+ * @param {String} tagName 
+ * @param {Function} callback:
+ *      err {Error}: possible errors if not available
+ */
+export const removeTag = (categoryName, tagName, callback) => {
+    var dbconnect = new DBConnect();
     dbconnect.con.query('delete from tag where tid in (select * from (select tag.tid from' +
         ' tag left outer join category on tag.cid=category.cid where' +
         ' tag.tname="' + tagName +
@@ -126,8 +176,16 @@ export const removeTag = (categoryName, tagName, callback, db) => {
         });
 }
 
-export const checkTagAvailabilityBeforeRemoveTag = (categoryName, tagName, callback, db) => {
-    var dbconnect = db || new DBConnect();
+/**
+ * check tag availability in files globally before removing tag
+ * @param {String} categoryName 
+ * @param {String} tagName 
+ * @param {Function} callback(err, avail)
+ *      err: {Error} possible errors
+ *      avail: {Boolean} availability 
+ */
+export const checkTagAvailabilityBeforeRemoveTag = (categoryName, tagName, callback) => {
+    var dbconnect = new DBConnect();
     dbconnect.con.query('select filetag.filid from filetag where tid=(select tag.tid from' +
         ' tag left outer join category on tag.cid=category.cid where' +
         ' tag.tname="' + tagName +
@@ -144,12 +202,22 @@ export const checkTagAvailabilityBeforeRemoveTag = (categoryName, tagName, callb
         })
 }
 
-export const tagFile = (filid, cname, tname, successCallback, errCallback, db) => {
-    var dbconnect = db || new DBConnect();
+/**
+ * tag a file
+ * @param {Number} filid : file id
+ * @param {String} cname : category name
+ * @param {String} tname : tag name
+ * @param {Function} successCallback(filid)
+ *      filid {Number}: file id
+ * @param {Function} errCallback() : possible errors
+ */
+export const tagFile = (filid, cname, tname, successCallback, errCallback) => {
+    var dbconnect = new DBConnect();
     dbconnect.con.query('select tid from tag, category where tag.cid=category.cid and tag.tname="' +
         tname + '" and category.cname="' + cname + '"',
         function(err, rows) {
             if (err) {
+                dbconnect.con.end();
                 errCallback();
             } else {
                 var tid = rows[0].tid;
@@ -165,8 +233,15 @@ export const tagFile = (filid, cname, tname, successCallback, errCallback, db) =
         });
 }
 
-export const removeTagFromFile = (filid, tname, cname, callback, db) => {
-    var dbconnect = db || new DBConnect();
+/**
+ * remove a tag from a file
+ * @param {Number} filid : file id
+ * @param {String} tname : tag name
+ * @param {String} cname : category name
+ * @param {Function} callback() 
+ */
+export const removeTagFromFile = (filid, tname, cname, callback) => {
+    var dbconnect = new DBConnect();
     dbconnect.con.query('delete from filetag where filid=' + filid + ' and tid in (select * from (select tag.tid from' +
         ' tag left outer join category on tag.cid=category.cid where' +
         ' tag.tname="' + tname +
@@ -181,20 +256,32 @@ export const removeTagFromFile = (filid, tname, cname, callback, db) => {
         });
 }
 
+/**
+ * import a folder path to database
+ * @param {String} fpath : folder path
+ * @param {Function} callback(folid) : folid {Number} : the assigned folder id
+ */
 export const importFolder = (fpath, callback) => {
     var dbconnect = new DBConnect();
     dbconnect.con.query('insert into indexedfolders(fpath) values ("' + fpath + '/")', function(err) {
-        dbconnect.con.query('select max(folid) as folid from indexedfolders', function(err, rows) {
-            if (err) {} {
+        var e = err;
+        dbconnect.con.query('select max(folid) as folid from indexedfolders', function(_err, rows) {
+            if (_err) {} {
                 dbconnect.con.end();
-                console.log(rows[0]);
-                console.log(rows[0].folid);
-                callback(rows[0].folid);
+                // console.log(rows[0]);
+                // console.log(rows[0].folid);
+                callback(e || _err, rows[0].folid);
             }
         });
     });
 }
 
+/**
+ * import file to the database
+ * @param {Number} folid : folder id
+ * @param {String} filename : file name
+ * @param {Function} callback() 
+ */
 export const importFile = (folid, filename, callback) => {
     var dbconnect = new DBConnect();
     // console.log(folid + ' ' + filename);

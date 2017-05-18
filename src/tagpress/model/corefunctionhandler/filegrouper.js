@@ -3,10 +3,13 @@ import fs from 'fs'
 import mkdirp from 'mkdirp'
 import exec from 'exec'
 
+/**
+ * @class
+ */
 export class FileGrouper {
 
     /**
-     * 
+     * @constructor
      * @param {File[]} files
      * @param {Tag[]} tags 
      * @param {string} target
@@ -16,28 +19,9 @@ export class FileGrouper {
         this.files = files;
         this.tags = tags;
         this.target = target;
-        console.log(files);
-        console.log(tags);
-        console.log(target);
-        // var pathMap = [];
-        // files.forEach(function(file) {
-        //     pathMap[file.path] = [];
-        // });
-        // tags.forEach(function(tag) {
-        //     files.forEach(function(file) {
-        //         file.tags.forEach(function(filetag) {
-        //             if (filetag.tid == tag.tid) {
-        //                 if (pathMap[file.path].indexOf(target + '[' + tag.category.name + '].[' + tag.name + ']' + file.name) == -1) {
-        //                     pathMap[file.path].push(target + '[' + tag.category.name + '].[' + tag.name + ']' + file.name);
-        //                 }
-        //             }
-        //         })
-        //     });
-        // });
-        // console.log(pathMap);
     }
 
-    copyFiles() {
+    copyFiles(callback) {
         var pathMap = [];
         this.files.forEach(function(file) {
             pathMap[file.path] = [];
@@ -58,23 +42,24 @@ export class FileGrouper {
                 })
             });
         });
-        console.log("pathMap " + pathMap);
+        // console.log("pathMap " + pathMap);
         var i = 0;
         for (var source in pathMap) {
             if (pathMap.hasOwnProperty(source)) {
                 pathMap[source].forEach(function(target) {
-                    console.log(source + '**[TO]**' + target + '**[STARTED]');
+                    // console.log(source + '**[TO]**' + target + '**[STARTED]');
                     self.copyFile(source, target, function(err) {
                         if (err) {
                             console.log(err);
                         }
-                        console.log(source + '**[TO]**' + target + '**[DONE]');
+                        // console.log(source + '**[TO]**' + target + '**[DONE]');
                         i++;
                         if (i == count) {
                             alert('File grouping done');
                             exec('nautilus ' + self.target, function(err, out, code) {
 
                             });
+                            callback();
                         }
                     });
                 });
@@ -89,6 +74,12 @@ export class FileGrouper {
         this.copyFiles();
     }
 
+    /**
+     * @private
+     * @param {String} source 
+     * @param {String} target 
+     * @param {Function} callback 
+     */
     copyFile(source, target, callback) {
         var cbCalled = false;
         var rd = fs.createReadStream(source);
@@ -112,6 +103,12 @@ export class FileGrouper {
         }
     }
 
+    /**
+     * @deprecated
+     * @param {String} source 
+     * @param {String} target 
+     * @param {Function} callback
+     */
     moveFile(source, target, callback) {
         fs.rename(source, target, function(err) {
             if (err) throw err;

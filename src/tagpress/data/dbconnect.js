@@ -16,10 +16,10 @@ export class DBConnect {
 
         this.con.connect(function(err) {
             if (err) {
-                console.log('Error connecting to DB');
+                // console.log('Error connecting to DB');
                 return;
             }
-            console.log('Connection Established');
+            // console.log('Connection Established');
         });
 
         this.pool = mysql.createPool({

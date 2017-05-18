@@ -389,32 +389,34 @@ document.querySelector('#btn-group-now').addEventListener('click', function() {
 
 
 var importFolder = function(folpath, callback) {
-    filequery.importFolder(folpath, function(folid) {
+    filequery.importFolder(folpath, function(_err, folid) {
         // console.log('0' + folid);
-        fs.readdir(folpath, function(err, files) {
-            // console.log('1' + folid);
-            if (err) {
-                throw err;
-            }
-            files.map(function(file) {
-                // console.log('2' + folid);
-                return path.join(folpath, file);
-            }).filter(function(file) {
-                // console.log('3' + folid);
-                return fs.statSync(file).isFile();
-            }).forEach(function(file) {
-                // console.log('4' + folid);
-                filequery.importFile(folid, path.basename(file), function(folid) {});
-                // console.log("%s (%s)", file, path.extname(file));
-                // callback(folid, )
-
-
+        if (_err && _err.message.startsWith('ER_DUP_ENTRY')) {
+            alert('No duplicate folders');
+        } else {
+            fs.readdir(folpath, function(err, files) {
+                // console.log('1' + folid);
+                if (err) {
+                    throw err;
+                }
+                files.map(function(file) {
+                    // console.log('2' + folid);
+                    return path.join(folpath, file);
+                }).filter(function(file) {
+                    // console.log('3' + folid);
+                    return fs.statSync(file).isFile();
+                }).forEach(function(file) {
+                    // console.log('4' + folid);
+                    filequery.importFile(folid, path.basename(file), function(folid) {});
+                    // console.log("%s (%s)", file, path.extname(file));
+                    // callback(folid, )
+                });
+                var folder = new Folder(folpath + "/");
+                folder.folid = folid;
+                currentFolder = folder;
+                callback(folder)
             });
-            var folder = new Folder(folpath + "/");
-            folder.folid = folid;
-            currentFolder = folder;
-            callback(folder)
-        });
+        }
     });
 }
 
